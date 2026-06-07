@@ -1,3 +1,9 @@
+allowBuilds:
+  esbuild: true
+  sharp: true
+  unrs-resolver: true
+  workerd: true
+
 # Dependencias autorizadas a ejecutar scripts de build (binarios nativos).
 onlyBuiltDependencies:
   - esbuild
