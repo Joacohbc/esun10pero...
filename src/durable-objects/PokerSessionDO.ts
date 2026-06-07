@@ -94,14 +94,14 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 		}
 	}
 
-	async webSocketClose(ws: WebSocket): Promise<void> {
+	async webSocketClose(_ws: WebSocket): Promise<void> {
 		// El jugador se desconecta; lo dejamos en el roster (puede reconectar).
 		this.reassignHostIfNeeded();
 		await this.persistAndBroadcast();
 		await this.scheduleCleanupIfEmpty();
 	}
 
-	async webSocketError(ws: WebSocket): Promise<void> {
+	async webSocketError(_ws: WebSocket): Promise<void> {
 		this.reassignHostIfNeeded();
 		await this.persistAndBroadcast();
 		await this.scheduleCleanupIfEmpty();
