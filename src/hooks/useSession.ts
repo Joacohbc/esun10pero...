@@ -9,6 +9,7 @@ interface UseSessionOptions {
 	code: string;
 	playerId: string;
 	name: string;
+	color: string;
 	/** Eventos efímeros del servidor para animación/sonido. */
 	onEvent?: (event: "flip" | "shuffle" | "empty") => void;
 }
@@ -29,7 +30,7 @@ function wsUrl(code: string): string {
  * Mantiene la conexión WebSocket con el Durable Object de la sala.
  * Reenvía `join` al abrir, reconecta con backoff y expone `send`.
  */
-export function useSession({ code, playerId, name, onEvent }: UseSessionOptions): UseSessionResult {
+export function useSession({ code, playerId, name, color, onEvent }: UseSessionOptions): UseSessionResult {
 	const [state, setState] = useState<PublicGameState | null>(null);
 	const [status, setStatus] = useState<ConnectionStatus>("connecting");
 	const [error, setError] = useState<string | null>(null);
@@ -38,9 +39,9 @@ export function useSession({ code, playerId, name, onEvent }: UseSessionOptions)
 	const reconnectRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const closedByUs = useRef(false);
 	// Guardamos los datos de join en refs para no reconectar al cambiar el nombre.
-	const joinRef = useRef({ playerId, name });
+	const joinRef = useRef({ playerId, name, color });
 	const onEventRef = useRef(onEvent);
-	joinRef.current = { playerId, name };
+	joinRef.current = { playerId, name, color };
 	onEventRef.current = onEvent;
 
 	const send = useCallback((msg: ClientMessage) => {
@@ -68,7 +69,7 @@ export function useSession({ code, playerId, name, onEvent }: UseSessionOptions)
 			ws.onopen = () => {
 				setStatus("open");
 				setError(null);
-				ws.send(JSON.stringify({ type: "join", playerId: joinRef.current.playerId, name: joinRef.current.name } satisfies ClientMessage));
+				ws.send(JSON.stringify({ type: "join", playerId: joinRef.current.playerId, name: joinRef.current.name, color: joinRef.current.color } satisfies ClientMessage));
 			};
 
 			ws.onmessage = (ev) => {

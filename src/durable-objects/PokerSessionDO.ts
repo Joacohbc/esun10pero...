@@ -6,6 +6,7 @@ import type { ClientMessage, Phase, PublicGameState, PublicPlayer, ServerMessage
 interface RosterPlayer {
 	id: string;
 	name: string;
+	color: string;
 }
 
 /** Estado autoritativo completo de la sala (solo vive en el servidor). */
@@ -117,7 +118,7 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 	private async handle(ws: WebSocket, msg: ClientMessage): Promise<void> {
 		switch (msg.type) {
 			case "join":
-				return this.onJoin(ws, msg.playerId, msg.name);
+				return this.onJoin(ws, msg.playerId, msg.name, msg.color);
 			case "volunteerHidden":
 			case "becomeMigajero":
 				return this.onVolunteerHidden(ws);
@@ -138,15 +139,16 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 		}
 	}
 
-	private async onJoin(ws: WebSocket, playerId: string, name: string): Promise<void> {
+	private async onJoin(ws: WebSocket, playerId: string, name: string, color: string): Promise<void> {
 		const cleanName = name.trim().slice(0, 24) || "Jugador";
 		ws.serializeAttachment({ playerId } satisfies SocketAttachment);
 
 		const existing = this.game.players.find((p) => p.id === playerId);
 		if (existing) {
 			existing.name = cleanName;
+			existing.color = color;
 		} else {
-			this.game.players.push({ id: playerId, name: cleanName });
+			this.game.players.push({ id: playerId, name: cleanName, color });
 		}
 		if (!this.game.hostId) this.game.hostId = playerId;
 
@@ -333,6 +335,7 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 		const players: PublicPlayer[] = this.game.players.map((p) => ({
 			id: p.id,
 			name: p.name,
+			color: p.color,
 			connected: connected.has(p.id),
 			isHost: p.id === this.game.hostId,
 		}));

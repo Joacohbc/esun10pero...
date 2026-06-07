@@ -2,18 +2,21 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { getIdentity, setName as persistName } from "@/lib/identity";
+import { getIdentity, setName as persistName, setColor as persistColor } from "@/lib/identity";
 import { generateCode, isValidCode } from "@/lib/protocol";
+import { PalomaSVG, PIGEON_COLORS, DEFAULT_COLOR } from "@/components/PalomaSVG";
 
-/** Landing: crear una sala nueva o unirse con un código. */
 export function JoinForm() {
 	const router = useRouter();
 	const [name, setName] = useState("");
+	const [color, setColor] = useState(DEFAULT_COLOR);
 	const [code, setCode] = useState("");
 	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
-		setName(getIdentity().name);
+		const id = getIdentity();
+		setName(id.name);
+		setColor(id.color);
 	}, []);
 
 	const go = (targetCode: string) => {
@@ -24,6 +27,11 @@ export function JoinForm() {
 		}
 		persistName(trimmed);
 		router.push(`/session/${targetCode}`);
+	};
+
+	const handleColorChange = (hex: string) => {
+		setColor(hex);
+		persistColor(hex);
 	};
 
 	const handleCreate = () => go(generateCode());
@@ -39,6 +47,29 @@ export function JoinForm() {
 
 	return (
 		<div className="w-full max-w-sm flex flex-col gap-6">
+			{/* Preview de paloma */}
+			<div className="flex flex-col items-center gap-4">
+				<PalomaSVG color={color} animated size={96} />
+
+				{/* Selector de color */}
+				<div className="flex gap-2">
+					{PIGEON_COLORS.map((c) => (
+						<button
+							key={c.hex}
+							title={c.label}
+							onClick={() => handleColorChange(c.hex)}
+							className="w-7 h-7 rounded-full transition-transform hover:scale-110"
+							style={{
+								backgroundColor: c.hex,
+								outline: color === c.hex ? `2px solid ${c.hex}` : "2px solid transparent",
+								outlineOffset: "2px",
+							}}
+						/>
+					))}
+				</div>
+			</div>
+
+			{/* Nombre */}
 			<div className="flex flex-col gap-2">
 				<label className="text-xs text-neutral-500 font-semibold uppercase tracking-wider">Tu nombre</label>
 				<input

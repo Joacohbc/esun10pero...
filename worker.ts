@@ -11,11 +11,11 @@
  * `./.open-next/worker.js` lo genera `opennextjs-cloudflare build` antes de que
  * wrangler empaquete este archivo, por eso los imports se resuelven en build.
  */
-// @ts-expect-error - generado por OpenNext durante el build
+// @ts-ignore - generado por OpenNext durante el build
 import openNextWorker from "./.open-next/worker.js";
 
 export { PokerSessionDO } from "./src/durable-objects/PokerSessionDO";
-// @ts-expect-error - re-export de los Durable Objects internos de OpenNext
+// @ts-ignore - re-export de los Durable Objects internos de OpenNext
 export { DOQueueHandler, DOShardedTagCache, BucketCachePurge } from "./.open-next/worker.js";
 
 export default {

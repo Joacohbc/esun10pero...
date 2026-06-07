@@ -5,6 +5,7 @@ export type Phase = "lobby" | "playing" | "revealed" | "selecting";
 export interface PublicPlayer {
 	id: string;
 	name: string;
+	color: string;
 	connected: boolean;
 	isHost: boolean;
 }
@@ -44,7 +45,7 @@ export interface PublicGameState {
 // ---- Mensajes Cliente -> Servidor ----
 
 export type ClientMessage =
-	| { type: "join"; playerId: string; name: string }
+	| { type: "join"; playerId: string; name: string; color: string }
 	| { type: "volunteerHidden" }
 	| { type: "becomeMigajero" }
 	| { type: "reveal" }
