@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { JoinForm } from "@/components/JoinForm";
 
 export const Route = createFileRoute("/")({
@@ -16,6 +16,13 @@ function Home() {
 			</header>
 
 			<JoinForm />
+
+			<Link
+				to="/offline"
+				className="text-xs text-neutral-500 hover:text-neutral-400 underline transition-colors cursor-pointer"
+			>
+				Jugar en modo offline
+			</Link>
 		</div>
 	);
 }
