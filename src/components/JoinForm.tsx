@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { getIdentity, setName as persistName, setColor as persistColor } from "@/lib/identity";
 import { generateCode, isValidCode } from "@/lib/protocol";
 import { PalomaSVG, PIGEON_COLORS, DEFAULT_COLOR } from "@/components/PalomaSVG";
+import { useDynamicFavicon } from "@/hooks/useDynamicFavicon";
 
 export function JoinForm() {
 	const navigate = useNavigate();
@@ -10,6 +11,8 @@ export function JoinForm() {
 	const [color, setColor] = useState(DEFAULT_COLOR);
 	const [code, setCode] = useState("");
 	const [error, setError] = useState<string | null>(null);
+
+	useDynamicFavicon(color);
 
 	useEffect(() => {
 		const id = getIdentity();

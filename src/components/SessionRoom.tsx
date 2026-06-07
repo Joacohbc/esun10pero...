@@ -10,6 +10,7 @@ import { PalomaSVG } from "./PalomaSVG";
 import { VisorModal } from "./VisorModal";
 import { VotePanel } from "./VotePanel";
 import { ScoreDisplay } from "./ScoreDisplay";
+import { useDynamicFavicon } from "@/hooks/useDynamicFavicon";
 
 /** Pide el nombre si el jugador entró por enlace directo sin haberlo fijado. */
 function NamePrompt({ onSubmit }: { onSubmit: (name: string) => void }) {
@@ -44,6 +45,8 @@ export function SessionRoom({ code }: { code: string }) {
 	const [visorOpen, setVisorOpen] = useState(false);
 	const [bounce, setBounce] = useState(false);
 	const [copied, setCopied] = useState(false);
+
+	useDynamicFavicon(identity.color);
 
 	const { enabled: soundEnabled, toggle: toggleSound, playSound } = useSound();
 
