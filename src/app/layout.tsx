@@ -13,8 +13,19 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: "Póker Simple — Salas multijugador",
-	description: "Crea una sala, comparte el código y jueguen: uno no ve la carta, el resto sí.",
+	title: "Es un 10 pero...",
+	description: "Crea una sala, comparte el código y descubran quién es el más migajero.",
+	openGraph: {
+		title: "Es un 10 pero...",
+		description: "Crea una sala, comparte el código y descubran quién es el más migajero.",
+		locale: "es_AR",
+		type: "website",
+	},
+	twitter: {
+		card: "summary",
+		title: "Es un 10 pero...",
+		description: "Crea una sala, comparte el código y descubran quién es el más migajero.",
+	},
 };
 
 export default function RootLayout({
@@ -24,9 +35,6 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="es">
-			<head>
-				<link rel="icon" href="/favicon.svg" type="image/svg+xml"></link>
-			</head>
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
 		</html>
 	);
