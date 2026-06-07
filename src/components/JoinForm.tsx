@@ -50,13 +50,13 @@ export function JoinForm() {
 				<PalomaSVG color={color} animated size={96} />
 
 				{/* Selector de color */}
-				<div className="flex gap-2">
+				<div className="flex flex-wrap justify-center gap-2 max-w-xs">
 					{PIGEON_COLORS.map((c) => (
 						<button
 							key={c.hex}
 							title={c.label}
 							onClick={() => handleColorChange(c.hex)}
-							className="w-7 h-7 rounded-full transition-transform hover:scale-110"
+							className="w-7 h-7 rounded-full transition-transform hover:scale-110 cursor-pointer"
 							style={{
 								backgroundColor: c.hex,
 								outline: color === c.hex ? `2px solid ${c.hex}` : "2px solid transparent",
@@ -64,6 +64,24 @@ export function JoinForm() {
 							}}
 						/>
 					))}
+					{/* Selector personalizado */}
+					<label
+						title="Color personalizado"
+						className="w-7 h-7 rounded-full transition-transform hover:scale-110 cursor-pointer flex items-center justify-center relative overflow-hidden"
+						style={{
+							background: "linear-gradient(45deg, #ff0000, #ff00ff, #0000ff, #00ffff, #00ff00, #ffff00, #ff0000)",
+							outline: !PIGEON_COLORS.some((c) => c.hex === color) ? `2px solid ${color}` : "2px solid transparent",
+							outlineOffset: "2px",
+						}}
+					>
+						<input
+							type="color"
+							value={color}
+							onChange={(e) => handleColorChange(e.target.value)}
+							className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+						/>
+						<span className="text-white text-[10px] font-bold drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]">+</span>
+					</label>
 				</div>
 			</div>
 

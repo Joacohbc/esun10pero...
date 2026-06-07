@@ -99,7 +99,7 @@ export function SessionRoom({ code }: { code: string }) {
 			{/* Header */}
 			<header className="w-full max-w-md mx-auto px-6 pt-6 flex justify-between items-center gap-3">
 				<button onClick={copyCode} className="flex items-center gap-2 group bg-neutral-900 hover:bg-neutral-800 active:scale-95 border border-neutral-800 hover:border-neutral-600 px-3 py-2 rounded-xl transition-all" title="Copiar código de sala">
-					<PalomaSVG color={identity.color} size={28} className="shrink-0" />
+					<PalomaSVG color={identity.color} size={28} animated className="shrink-0" />
 					<span className="font-mono font-bold tracking-[0.2em] text-neutral-200 group-hover:text-white transition-colors">{code}</span>
 					<span className="text-[10px] text-neutral-500 group-hover:text-neutral-400 transition-colors">{copied ? "¡copiado!" : "📋 copiar"}</span>
 				</button>

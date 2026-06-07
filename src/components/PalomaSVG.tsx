@@ -8,10 +8,15 @@ export interface PigeonColor {
 export const PIGEON_COLORS: PigeonColor[] = [
 	{ label: "Gris", hex: "#9CA3AF" },
 	{ label: "Azul", hex: "#60A5FA" },
+	{ label: "Cian", hex: "#38BDF8" },
 	{ label: "Verde", hex: "#4ADE80" },
+	{ label: "Esmeralda", hex: "#34D399" },
 	{ label: "Violeta", hex: "#A78BFA" },
+	{ label: "Fucsia", hex: "#E879F9" },
 	{ label: "Rosa", hex: "#F472B6" },
+	{ label: "Rojo", hex: "#F87171" },
 	{ label: "Naranja", hex: "#FB923C" },
+	{ label: "Amarillo", hex: "#FBBF24" },
 ];
 
 export const DEFAULT_COLOR = PIGEON_COLORS[0].hex;

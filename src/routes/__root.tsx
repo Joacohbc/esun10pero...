@@ -19,7 +19,7 @@ export const Route = createRootRoute({
 			{ name: "twitter:title", content: "Es un 10 pero..." },
 			{ name: "twitter:description", content: "Crea una sala, comparte el código y descubran quién es el más migajero." },
 		],
-		link: [
+		links: [
 			{ rel: "icon", type: "image/svg+xml", href: "/icon.svg" },
 		],
 	}),

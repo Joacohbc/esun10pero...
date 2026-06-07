@@ -22,7 +22,7 @@ export function PlayerList({ state }: PlayerListProps) {
 						>
 							<span className="flex items-center gap-2 min-w-0">
 								<span className={`inline-block w-2 h-2 rounded-full shrink-0 ${p.connected ? "bg-emerald-500" : "bg-neutral-600"}`} />
-								<PalomaSVG color={p.color} size={20} className="shrink-0" />
+								<PalomaSVG color={p.color} size={20} animated className="shrink-0" />
 								<span className="truncate font-medium text-neutral-200">
 									{p.name}
 									{isYou && <span className="text-neutral-500"> (tú)</span>}
