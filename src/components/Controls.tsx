@@ -72,10 +72,19 @@ export function Controls({ state, send, isHost, isHidden, soundEnabled, onToggle
 				</button>
 				<button
 					onClick={onToggleSound}
-					className={`bg-neutral-900 hover:bg-neutral-800 text-neutral-300 py-3 rounded-xl text-xs font-semibold border border-neutral-800 transition-all ${soundEnabled ? "" : "opacity-50"}`}
+					className={`bg-neutral-900 hover:bg-neutral-800 text-neutral-300 py-3 rounded-xl text-xs font-semibold border border-neutral-800 transition-all flex items-center justify-center gap-1.5 ${soundEnabled ? "" : "opacity-50"}`}
 					title="Alternar sonido"
 				>
-					{soundEnabled ? "🔊 Sonido" : "🔇 Sonido"}
+					{soundEnabled ? (
+						<svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+							<path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M12 18.75V5.25L7.75 9.5H4.5v5h3.25L12 18.75z" />
+						</svg>
+					) : (
+						<svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+							<path strokeLinecap="round" strokeLinejoin="round" d="M17.25 9.75L19.5 12m0 0l2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25M12 18.75V5.25L7.75 9.5H4.5v5h3.25L12 18.75z" />
+						</svg>
+					)}
+					<span>Sonido</span>
 				</button>
 			</div>
 

@@ -104,7 +104,23 @@ export function SessionRoom({ code }: { code: string }) {
 				<button onClick={copyCode} className="flex items-center gap-2 group bg-neutral-900 hover:bg-neutral-800 active:scale-95 border border-neutral-800 hover:border-neutral-600 px-3 py-2 rounded-xl transition-all" title="Copiar código de sala">
 					<PalomaSVG color={identity.color} size={28} animated className="shrink-0" />
 					<span className="font-mono font-bold tracking-[0.2em] text-neutral-200 group-hover:text-white transition-colors">{code}</span>
-					<span className="text-[10px] text-neutral-500 group-hover:text-neutral-400 transition-colors">{copied ? "¡copiado!" : "📋 copiar"}</span>
+					<span className="text-[10px] text-neutral-500 group-hover:text-neutral-400 transition-colors flex items-center gap-1">
+						{copied ? (
+							<>
+								<svg className="w-3 h-3 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+									<path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+								</svg>
+								<span>¡copiado!</span>
+							</>
+						) : (
+							<>
+								<svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+									<path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3a1 1 0 011-1h8l4 4v9a1 1 0 01-1 1h-3M6 9h8a1 1 0 011 1v9a1 1 0 01-1 1H6a1 1 0 01-1-1V10a1 1 0 011-1z" />
+								</svg>
+								<span>copiar</span>
+							</>
+						)}
+					</span>
 				</button>
 				<div className="flex items-center gap-2">
 					<div className="text-xs bg-neutral-900 border border-neutral-800 px-3 py-1.5 rounded-full text-neutral-400 flex items-center gap-2">

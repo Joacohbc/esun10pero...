@@ -45,9 +45,12 @@ function OfflinePage() {
 				) : (
 					<div
 						onClick={drawCard}
-						className="w-64 h-96 sm:w-72 sm:h-[400px] border-2 border-dashed border-neutral-800 hover:border-neutral-700 rounded-2xl flex flex-col items-center justify-center gap-3 cursor-pointer text-neutral-500 hover:text-neutral-400 transition-colors"
+						className="w-64 h-96 sm:w-72 sm:h-[400px] border-2 border-dashed border-neutral-800 hover:border-neutral-700 rounded-2xl flex flex-col items-center justify-center gap-4 cursor-pointer text-neutral-500 hover:text-neutral-400 transition-colors group"
 					>
-						<span className="text-5xl">🎴</span>
+						<svg className="w-14 h-14 text-neutral-600 group-hover:text-neutral-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.2}>
+							<rect x="4" y="3" width="16" height="18" rx="2" />
+							<path strokeLinecap="round" strokeLinejoin="round" d="M12 8v8M9 11h6" />
+						</svg>
 						<span className="text-sm font-semibold">Toca para sacar una carta</span>
 					</div>
 				)}
@@ -76,9 +79,12 @@ function OfflinePage() {
 						</button>
 						<button
 							onClick={() => setIsFullscreen(true)}
-							className="bg-neutral-950 border border-neutral-800 hover:bg-neutral-900 hover:border-neutral-700 active:scale-[0.98] text-neutral-200 py-3.5 px-4 rounded-xl font-bold tracking-wide transition-all cursor-pointer flex items-center justify-center gap-1"
+							className="bg-neutral-950 border border-neutral-800 hover:bg-neutral-900 hover:border-neutral-700 active:scale-[0.98] text-neutral-200 py-3.5 px-4 rounded-xl font-bold tracking-wide transition-all cursor-pointer flex items-center justify-center gap-2"
 						>
-							📺 Pantalla completa
+							<svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+								<path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4h4m12 4V4h-4M4 16v4h4m12-4v4h-4" />
+							</svg>
+							<span>Pantalla completa</span>
 						</button>
 					</div>
 				)}
@@ -86,15 +92,23 @@ function OfflinePage() {
 				<div className="grid grid-cols-2 gap-2">
 					<button
 						onClick={() => setIsSelectorOpen(true)}
-						className="bg-neutral-900 border border-neutral-800 hover:bg-neutral-800 hover:border-neutral-700 active:scale-[0.98] text-neutral-300 py-3.5 px-4 rounded-xl font-semibold tracking-wide transition-all cursor-pointer"
+						className="bg-neutral-900 border border-neutral-800 hover:bg-neutral-800 hover:border-neutral-700 active:scale-[0.98] text-neutral-300 py-3.5 px-4 rounded-xl font-semibold tracking-wide transition-all cursor-pointer flex items-center justify-center gap-2"
 					>
-						🗂️ Elegir de baraja
+						<svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+							<rect x="3" y="3" width="12" height="12" rx="2" />
+							<path strokeLinecap="round" strokeLinejoin="round" d="M9 17h6a2 2 0 002-2V9" />
+							<path strokeLinecap="round" strokeLinejoin="round" d="M13 21h6a2 2 0 002-2v-6" />
+						</svg>
+						<span>Elegir de baraja</span>
 					</button>
 					<button
 						onClick={drawCard}
-						className="bg-neutral-100 hover:bg-white active:scale-[0.98] text-neutral-900 py-3.5 px-4 rounded-xl font-bold tracking-wide shadow-md transition-all cursor-pointer"
+						className="bg-neutral-100 hover:bg-white active:scale-[0.98] text-neutral-900 py-3.5 px-4 rounded-xl font-bold tracking-wide shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
 					>
-						🎰 Carta aleatoria
+						<svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+							<path strokeLinecap="round" strokeLinejoin="round" d="M18 4l3 3m0 0l-3 3m3-3H9a4 4 0 00-4 4v1a4 4 0 004 4h10M6 20l-3-3m0 0l3-3m-3 3h12a4 4 0 004-4v-1a4 4 0 00-4-4H9" />
+						</svg>
+						<span>Carta aleatoria</span>
 					</button>
 				</div>
 			</footer>
