@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useSession } from "@/hooks/useSession";
 import { useSound } from "@/hooks/useSound";
 import { getIdentity, setName as persistName } from "@/lib/identity";
@@ -37,6 +38,7 @@ function NamePrompt({ onSubmit }: { onSubmit: (name: string) => void }) {
 }
 
 export function SessionRoom({ code }: { code: string }) {
+	const router = useRouter();
 	const [identity, setIdentity] = useState(() => ({ playerId: "", name: "" }));
 	const [ready, setReady] = useState(false);
 	const [visorOpen, setVisorOpen] = useState(false);
@@ -95,22 +97,31 @@ export function SessionRoom({ code }: { code: string }) {
 		<div className="min-h-screen flex flex-col justify-between">
 			{/* Header */}
 			<header className="w-full max-w-md mx-auto px-6 pt-6 flex justify-between items-center gap-3">
-				<button onClick={copyCode} className="flex items-center gap-2 group" title="Copiar código">
-					<div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center shadow-lg shadow-red-950/30">
+				<button onClick={copyCode} className="flex items-center gap-2 group bg-neutral-900 hover:bg-neutral-800 active:scale-95 border border-neutral-800 hover:border-neutral-600 px-3 py-2 rounded-xl transition-all" title="Copiar código de sala">
+					<div className="w-7 h-7 rounded-lg bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center shadow-lg shadow-red-950/30 shrink-0">
 						<span className="text-white font-bold text-sm">♠</span>
 					</div>
 					<span className="font-mono font-bold tracking-[0.2em] text-neutral-200 group-hover:text-white transition-colors">{code}</span>
-					<span className="text-[10px] text-neutral-500">{copied ? "¡copiado!" : "copiar"}</span>
+					<span className="text-[10px] text-neutral-500 group-hover:text-neutral-400 transition-colors">{copied ? "¡copiado!" : "📋 copiar"}</span>
 				</button>
-				<div className="text-xs bg-neutral-900 border border-neutral-800 px-3 py-1.5 rounded-full text-neutral-400 flex items-center gap-2">
-					<span className={`inline-block w-2 h-2 rounded-full ${status === "open" ? "bg-emerald-500 animate-pulse" : "bg-amber-500"}`} />
-					{state ? (
-						<>
-							Mazo: <span className="font-mono font-bold text-neutral-200">{state.deckCount}/{state.activeCount}</span>
-						</>
-					) : (
-						"conectando…"
-					)}
+				<div className="flex items-center gap-2">
+					<div className="text-xs bg-neutral-900 border border-neutral-800 px-3 py-1.5 rounded-full text-neutral-400 flex items-center gap-2">
+						<span className={`inline-block w-2 h-2 rounded-full ${status === "open" ? "bg-emerald-500 animate-pulse" : "bg-amber-500"}`} />
+						{state ? (
+							<>
+								Mazo: <span className="font-mono font-bold text-neutral-200">{state.deckCount}/{state.activeCount}</span>
+							</>
+						) : (
+							"conectando…"
+						)}
+					</div>
+					<button
+						onClick={() => router.push("/")}
+						title="Salir de la sesión"
+						className="text-xs bg-neutral-900 border border-neutral-800 hover:border-red-800 hover:text-red-400 px-3 py-1.5 rounded-full text-neutral-400 transition-colors"
+					>
+						Salir
+					</button>
 				</div>
 			</header>
 

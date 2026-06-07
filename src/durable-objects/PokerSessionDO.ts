@@ -93,11 +93,19 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 		// El jugador se desconecta; lo dejamos en el roster (puede reconectar).
 		this.reassignHostIfNeeded();
 		await this.persistAndBroadcast();
+		await this.scheduleCleanupIfEmpty();
 	}
 
 	async webSocketError(ws: WebSocket): Promise<void> {
 		this.reassignHostIfNeeded();
 		await this.persistAndBroadcast();
+		await this.scheduleCleanupIfEmpty();
+	}
+
+	async alarm(): Promise<void> {
+		if (this.connectedPlayerIds().size === 0) {
+			await this.ctx.storage.deleteAll();
+		}
 	}
 
 	// ---- Dispatcher de acciones ----
@@ -133,6 +141,7 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 		}
 		if (!this.game.hostId) this.game.hostId = playerId;
 
+		await this.ctx.storage.deleteAlarm();
 		await this.persistAndBroadcast();
 	}
 
@@ -329,6 +338,14 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 	private broadcastEvent(event: "flip" | "shuffle" | "empty"): void {
 		const msg: ServerMessage = { type: "event", event };
 		for (const ws of this.ctx.getWebSockets()) this.send(ws, msg);
+	}
+
+	private async scheduleCleanupIfEmpty(): Promise<void> {
+		if (this.connectedPlayerIds().size === 0) {
+			await this.ctx.storage.setAlarm(Date.now() + 60 * 60 * 1000);
+		} else {
+			await this.ctx.storage.deleteAlarm();
+		}
 	}
 
 	private async persistAndBroadcast(): Promise<void> {
