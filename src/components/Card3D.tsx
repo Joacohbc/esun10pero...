@@ -15,8 +15,13 @@ interface Card3DProps {
 
 /** Contenedor 3D con la animación de volteo, portado del generador original. */
 export function Card3D({ card, flipped, onClick, bounce }: Card3DProps) {
+	const cardKey = card ? card.id : "empty";
 	return (
-		<div className="perspective-1000 w-64 h-96 sm:w-72 sm:h-[400px] cursor-pointer group" onClick={onClick}>
+		<div
+			key={cardKey}
+			className="perspective-1000 w-64 h-96 sm:w-72 sm:h-[400px] cursor-pointer group animate-deal"
+			onClick={onClick}
+		>
 			<div
 				className={`w-full h-full preserve-3d transition-transform duration-500 relative rounded-2xl shadow-2xl ${
 					flipped ? "rotate-y-180" : ""
