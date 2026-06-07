@@ -1,7 +1,5 @@
-"use client";
-
 import { useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "@tanstack/react-router";
 import { useSession } from "@/hooks/useSession";
 import { useSound } from "@/hooks/useSound";
 import { getIdentity, setName as persistName } from "@/lib/identity";
@@ -40,7 +38,7 @@ function NamePrompt({ onSubmit }: { onSubmit: (name: string) => void }) {
 }
 
 export function SessionRoom({ code }: { code: string }) {
-	const router = useRouter();
+	const navigate = useNavigate();
 	const [identity, setIdentity] = useState(() => ({ playerId: "", name: "", color: "#9CA3AF" }));
 	const [ready, setReady] = useState(false);
 	const [visorOpen, setVisorOpen] = useState(false);
@@ -117,7 +115,7 @@ export function SessionRoom({ code }: { code: string }) {
 						)}
 					</div>
 					<button
-						onClick={() => router.push("/")}
+						onClick={() => navigate({ to: "/" })}
 						title="Salir de la sesión"
 						className="text-xs bg-neutral-900 border border-neutral-800 hover:border-red-800 hover:text-red-400 px-3 py-1.5 rounded-full text-neutral-400 transition-colors"
 					>

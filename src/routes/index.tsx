@@ -1,6 +1,11 @@
+import { createFileRoute } from "@tanstack/react-router";
 import { JoinForm } from "@/components/JoinForm";
 
-export default function Home() {
+export const Route = createFileRoute("/")({
+	component: Home,
+});
+
+function Home() {
 	return (
 		<div className="min-h-screen flex flex-col items-center justify-center px-6 py-12 gap-10">
 			<header className="flex flex-col items-center gap-3 text-center">

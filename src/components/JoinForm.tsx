@@ -1,13 +1,11 @@
-"use client";
-
-import { useRouter } from "next/navigation";
+import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { getIdentity, setName as persistName, setColor as persistColor } from "@/lib/identity";
 import { generateCode, isValidCode } from "@/lib/protocol";
 import { PalomaSVG, PIGEON_COLORS, DEFAULT_COLOR } from "@/components/PalomaSVG";
 
 export function JoinForm() {
-	const router = useRouter();
+	const navigate = useNavigate();
 	const [name, setName] = useState("");
 	const [color, setColor] = useState(DEFAULT_COLOR);
 	const [code, setCode] = useState("");
@@ -26,7 +24,7 @@ export function JoinForm() {
 			return;
 		}
 		persistName(trimmed);
-		router.push(`/session/${targetCode}`);
+		navigate({ to: `/session/${targetCode}` });
 	};
 
 	const handleColorChange = (hex: string) => {

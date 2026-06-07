@@ -10,12 +10,7 @@
 	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
 	"assets": {
 		"binding": "ASSETS",
-		"directory": ".open-next/assets"
-	},
-	"images": {
-		// Enable image optimization
-		// see https://opennext.js.org/cloudflare/howtos/image
-		"binding": "IMAGES"
+		"directory": "dist/client"
 	},
 	"durable_objects": {
 		"bindings": [
@@ -31,18 +26,10 @@
 			"new_sqlite_classes": ["PokerSessionDO"]
 		}
 	],
-	"services": [
-		{
-			// Self-reference service binding, the service name must match the worker name
-			// see https://opennext.js.org/cloudflare/caching
-			"binding": "WORKER_SELF_REFERENCE",
-			"service": "esun10pero"
-		}
-	],
 	"observability": {
 		"enabled": true
 	},
 	"build": {
-		"command": "pnpm exec opennextjs-cloudflare build"
+		"command": "pnpm run build"
 	}
 }
