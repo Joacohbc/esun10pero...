@@ -4,9 +4,9 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "<WORKER_NAME>",
-	"main": ".open-next/worker.js",
-	"compatibility_date": "<COMPATIBILITY_DATE>",
+	"name": "esun10pero",
+	"main": "worker.ts",
+	"compatibility_date": "2025-03-01",
 	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
 	"assets": {
 		"binding": "ASSETS",
@@ -17,12 +17,26 @@
 		// see https://opennext.js.org/cloudflare/howtos/image
 		"binding": "IMAGES"
 	},
+	"durable_objects": {
+		"bindings": [
+			{
+				"name": "POKER_SESSION",
+				"class_name": "PokerSessionDO"
+			}
+		]
+	},
+	"migrations": [
+		{
+			"tag": "v1",
+			"new_sqlite_classes": ["PokerSessionDO"]
+		}
+	],
 	"services": [
 		{
 			// Self-reference service binding, the service name must match the worker name
 			// see https://opennext.js.org/cloudflare/caching
 			"binding": "WORKER_SELF_REFERENCE",
-			"service": "<WORKER_NAME>"
+			"service": "esun10pero"
 		}
 	],
 	"observability": {

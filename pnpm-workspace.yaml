@@ -1,5 +1,11 @@
-allowBuilds:
-  esbuild: set this to true or false
-  sharp: set this to true or false
-  unrs-resolver: set this to true or false
-  workerd: set this to true or false
+# Dependencias autorizadas a ejecutar scripts de build (binarios nativos).
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+  - unrs-resolver
+  - workerd
+
+# No re-verificar/instalar dependencias antes de cada `pnpm run <script>`.
+# Evita que el build de OpenNext (que invoca `pnpm build`) falle por la
+# comprobación de estado de dependencias.
+verifyDepsBeforeRun: false
