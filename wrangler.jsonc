@@ -41,5 +41,8 @@
 	],
 	"observability": {
 		"enabled": true
+	},
+	"build": {
+		"command": "pnpm exec opennextjs-cloudflare build"
 	}
 }
