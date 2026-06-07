@@ -1,47 +1,16 @@
-# OpenNext Starter
+<h1 align="center">Es un 10 pero...</h1>
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<p align="center">
+  <strong>¿Qué le perdonarías a un 10? ¡Descúbrelo con tus amigos!</strong><br>
+  Una aplicación web ideal para jugar en grupo, donde pueden debatir, votar y ponerle nota a esas situaciones incómodas o graciosas del clásico juego "es un 10 pero...".
+</p>
 
-## Getting Started
+## Built With
 
-Read the documentation at https://opennext.js.org/cloudflare.
-
-## Develop
-
-Run the Next.js development server:
-
-```bash
-npm run dev
-# or similar package manager command
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-## Preview
-
-Preview the application locally on the Cloudflare runtime:
-
-```bash
-npm run preview
-# or similar package manager command
-```
-
-## Deploy
-
-Deploy the application to Cloudflare:
-
-```bash
-npm run deploy
-# or similar package manager command
-```
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+[![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=white)](#)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](#)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)](#)
+[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare_Workers-F38020?logo=cloudflare&logoColor=white)](#)
+[![TanStack](https://img.shields.io/badge/TanStack-FF4154?logo=reactquery&logoColor=white)](#)
+[![WebSockets](https://img.shields.io/badge/WebSockets-010101?logo=socket.io&logoColor=white)](#)
+[![PNPM](https://img.shields.io/badge/PNPM-F69220?logo=pnpm&logoColor=white)](#)
