@@ -25,6 +25,8 @@ export const SUITS: Suit[] = [
 
 export const VALUES = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
 
+export const SIMPLE_VALUES = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10"] as const;
+
 export const TOTAL_CARDS = SUITS.length * VALUES.length; // 52
 
 /** Mazo maestro estático: referencia de las 52 cartas. */
@@ -40,6 +42,16 @@ const CARD_BY_ID = new Map<CardId, Card>(MASTER_DECK.map((c) => [c.id, c]));
 
 export function getCard(id: CardId): Card | undefined {
 	return CARD_BY_ID.get(id);
+}
+
+export function cardNumericValue(card: Card): number {
+	switch (card.value) {
+		case "A":  return 1;
+		case "J":  return 11;
+		case "Q":  return 12;
+		case "K":  return 13;
+		default:   return parseInt(card.value, 10);
+	}
 }
 
 /** Nombre del palo en español, para la UI del visor. */

@@ -33,6 +33,12 @@ export interface PublicGameState {
 	votes: Record<string, string>;
 	/** Tu propio playerId (la conexión que recibe este estado). */
 	youId: string;
+	/** Valoración 1-10 que el migajero ha enviado. null hasta que la envíe. */
+	migajeroRating: number | null;
+	/** Valor numérico de la carta (1-10 con mazo simple). null si no hay carta o está oculta al migajero. */
+	cardNumericValue: number | null;
+	/** true = mazo solo 1-10; false = mazo completo 52 cartas. */
+	simpleOnly: boolean;
 }
 
 // ---- Mensajes Cliente -> Servidor ----
@@ -40,10 +46,13 @@ export interface PublicGameState {
 export type ClientMessage =
 	| { type: "join"; playerId: string; name: string }
 	| { type: "volunteerHidden" }
+	| { type: "becomeMigajero" }
 	| { type: "reveal" }
+	| { type: "submitRating"; rating: number }
 	| { type: "vote"; candidateId: string }
 	| { type: "shuffle" }
 	| { type: "setExclusions"; excludedCardIds: CardId[] }
+	| { type: "setDeckMode"; simpleOnly: boolean }
 	| { type: "resetRound" };
 
 // ---- Mensajes Servidor -> Cliente ----

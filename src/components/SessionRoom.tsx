@@ -10,6 +10,7 @@ import { Controls } from "./Controls";
 import { PlayerList } from "./PlayerList";
 import { VisorModal } from "./VisorModal";
 import { VotePanel } from "./VotePanel";
+import { ScoreDisplay } from "./ScoreDisplay";
 
 /** Pide el nombre si el jugador entró por enlace directo sin haberlo fijado. */
 function NamePrompt({ onSubmit }: { onSubmit: (name: string) => void }) {
@@ -145,7 +146,12 @@ export function SessionRoom({ code }: { code: string }) {
 							onOpenVisor={() => setVisorOpen(true)}
 						/>
 
-						{state.phase === "revealed" && <VotePanel state={state} send={send} />}
+						{state.phase === "revealed" && (
+							<>
+								<ScoreDisplay state={state} />
+								<VotePanel state={state} send={send} />
+							</>
+						)}
 					</>
 				)}
 			</main>

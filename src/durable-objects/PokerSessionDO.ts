@@ -1,5 +1,5 @@
 import { DurableObject } from "cloudflare:workers";
-import { getCard, TOTAL_CARDS, type CardId } from "@/lib/cards";
+import { getCard, cardNumericValue, SUITS, SIMPLE_VALUES, TOTAL_CARDS, type CardId } from "@/lib/cards";
 import { buildDeck } from "@/lib/deck";
 import type { ClientMessage, Phase, PublicGameState, PublicPlayer, ServerMessage } from "@/lib/protocol";
 
@@ -20,6 +20,8 @@ interface GameState {
 	currentCardId: CardId | null;
 	revealedById: string | null;
 	votes: Record<string, string>;
+	migajeroRating: number | null;
+	simpleOnly: boolean;
 }
 
 interface SocketAttachment {
@@ -38,6 +40,8 @@ function defaultState(): GameState {
 		currentCardId: null,
 		revealedById: null,
 		votes: {},
+		migajeroRating: null,
+		simpleOnly: false,
 	};
 }
 
@@ -48,7 +52,7 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 		super(ctx, env);
 		ctx.blockConcurrencyWhile(async () => {
 			const saved = await ctx.storage.get<GameState>("game");
-			if (saved) this.game = saved;
+			if (saved) this.game = { ...defaultState(), ...saved };
 		});
 	}
 
@@ -115,15 +119,20 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 			case "join":
 				return this.onJoin(ws, msg.playerId, msg.name);
 			case "volunteerHidden":
+			case "becomeMigajero":
 				return this.onVolunteerHidden(ws);
 			case "reveal":
 				return this.onReveal(ws);
+			case "submitRating":
+				return this.onSubmitRating(ws, msg.rating);
 			case "vote":
 				return this.onVote(ws, msg.candidateId);
 			case "shuffle":
 				return this.onShuffle(ws);
 			case "setExclusions":
 				return this.onSetExclusions(ws, msg.excludedCardIds);
+			case "setDeckMode":
+				return this.onSetDeckMode(ws, msg.simpleOnly);
 			case "resetRound":
 				return this.onResetRound(ws);
 		}
@@ -159,12 +168,28 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 		const playerId = this.playerIdOf(ws);
 		if (!playerId) throw new Error("No identificado");
 		if (this.game.phase !== "playing") throw new Error("No hay carta para revelar");
-		if (playerId === this.game.hiddenPlayerId) throw new Error("El jugador oculto no puede revelar su propia carta");
+		if (playerId === this.game.hiddenPlayerId) throw new Error("El migajero no puede revelar su propia carta");
+
+		const isHost = playerId === this.game.hostId;
+		if (this.game.migajeroRating === null && !isHost) {
+			throw new Error("El migajero aún no ha enviado su valoración");
+		}
 
 		this.game.phase = "revealed";
 		this.game.revealedById = playerId;
 		this.game.votes = {};
 		this.broadcastEvent("flip");
+		await this.persistAndBroadcast();
+	}
+
+	private async onSubmitRating(ws: WebSocket, rating: number): Promise<void> {
+		const playerId = this.playerIdOf(ws);
+		if (!playerId) throw new Error("No identificado");
+		if (this.game.phase !== "playing") throw new Error("No hay ronda en curso");
+		if (playerId !== this.game.hiddenPlayerId) throw new Error("Solo el migajero puede enviar su valoración");
+		if (!Number.isInteger(rating) || rating < 1 || rating > 13) throw new Error("Valoración inválida (1-13)");
+
+		this.game.migajeroRating = rating;
 		await this.persistAndBroadcast();
 	}
 
@@ -203,6 +228,13 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 		await this.persistAndBroadcast();
 	}
 
+	private async onSetDeckMode(ws: WebSocket, simpleOnly: boolean): Promise<void> {
+		this.assertHost(ws);
+		this.game.simpleOnly = simpleOnly;
+		this.rebuildDeck();
+		await this.persistAndBroadcast();
+	}
+
 	private async onResetRound(ws: WebSocket): Promise<void> {
 		this.assertHost(ws);
 		this.game.phase = "lobby";
@@ -210,6 +242,7 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 		this.game.currentCardId = null;
 		this.game.revealedById = null;
 		this.game.votes = {};
+		this.game.migajeroRating = null;
 		await this.persistAndBroadcast();
 	}
 
@@ -226,11 +259,12 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 		this.game.phase = "playing";
 		this.game.revealedById = null;
 		this.game.votes = {};
+		this.game.migajeroRating = null;
 		this.broadcastEvent("flip");
 	}
 
 	private rebuildDeck(): void {
-		let deck = buildDeck(this.game.excludedCardIds);
+		let deck = buildDeck(this.game.excludedCardIds, this.game.simpleOnly);
 		// No duplicar la carta actualmente en juego.
 		if (this.game.currentCardId && this.game.phase === "playing") {
 			deck = deck.filter((id) => id !== this.game.currentCardId);
@@ -303,9 +337,18 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 			isHost: p.id === this.game.hostId,
 		}));
 
-		// Enmascarar la carta para el jugador oculto mientras la ronda está en juego.
+		// Enmascarar la carta para el migajero mientras la ronda está en juego.
 		const hideCard = this.game.phase === "playing" && playerId === this.game.hiddenPlayerId;
 		const currentCard = !hideCard && this.game.currentCardId ? (getCard(this.game.currentCardId) ?? null) : null;
+
+		// Valor numérico: oculto al migajero en "playing", visible a todos en "revealed".
+		const rawCard = this.game.currentCardId ? (getCard(this.game.currentCardId) ?? null) : null;
+		const numericValue = rawCard ? cardNumericValue(rawCard) : null;
+		const cardNumericVal = this.game.phase === "revealed" ? numericValue : (!hideCard ? numericValue : null);
+
+		const baseCount = this.game.simpleOnly
+			? SUITS.length * SIMPLE_VALUES.length
+			: TOTAL_CARDS;
 
 		return {
 			code: this.game.code,
@@ -315,11 +358,14 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 			hiddenPlayerId: this.game.hiddenPlayerId,
 			currentCard,
 			deckCount: this.game.deck.length,
-			activeCount: TOTAL_CARDS - this.game.excludedCardIds.length,
+			activeCount: baseCount - this.game.excludedCardIds.length,
 			excludedCardIds: this.game.excludedCardIds,
 			revealedById: this.game.revealedById,
 			votes: this.game.votes,
 			youId: playerId,
+			migajeroRating: this.game.migajeroRating,
+			cardNumericValue: cardNumericVal,
+			simpleOnly: this.game.simpleOnly,
 		};
 	}
 
