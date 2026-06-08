@@ -1,10 +1,10 @@
 import type { Card } from "@/lib/cards";
 
 /** Cara de la carta (valor + palo), portada del markup original. */
-export function CardFront({ card }: { card: Card }) {
+export function CardFront({ card, roundedClassName }: { card: Card; roundedClassName?: string }) {
 	return (
 		<div
-			className={`absolute inset-0 w-full h-full backface-hidden rotate-y-180 bg-white border border-neutral-200 ${card.suit.color} rounded-2xl flex flex-col justify-between p-5 select-none`}
+			className={`absolute inset-0 w-full h-full backface-hidden rotate-y-180 bg-white border border-neutral-200 ${card.suit.color} ${roundedClassName ?? "rounded-2xl"} flex flex-col justify-between p-5 select-none`}
 		>
 			{/* Esquina superior izquierda */}
 			<div className="flex flex-col items-center justify-start w-fit">
