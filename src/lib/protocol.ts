@@ -1,6 +1,6 @@
 import type { Card, CardId } from "./cards";
 
-export type Phase = "lobby" | "playing" | "revealed" | "selecting";
+export type Phase = "lobby" | "choosingCard" | "playing" | "revealed" | "selecting";
 
 export interface PublicPlayer {
 	id: string;
@@ -21,6 +21,7 @@ export interface PublicGameState {
 	players: PublicPlayer[];
 	hostId: string | null;
 	hiddenPlayerId: string | null;
+	pendingHiddenPlayerId: string | null;
 	/** Carta de la ronda. `null` si aún no se sacó o está oculta para ti. */
 	currentCard: Card | null;
 	/** Cuántas cartas quedan en el mazo. */
@@ -47,6 +48,7 @@ export interface PublicGameState {
 export type ClientMessage =
 	| { type: "join"; playerId: string; name: string; color: string }
 	| { type: "volunteerHidden" }
+	| { type: "chooseCard"; cardId: CardId | "random" }
 	| { type: "becomeMigajero" }
 	| { type: "reveal" }
 	| { type: "submitRating"; rating: number }
