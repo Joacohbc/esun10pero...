@@ -15,6 +15,4 @@ onlyBuiltDependencies:
   - workerd
 
 # No re-verificar/instalar dependencias antes de cada `pnpm run <script>`.
-# Evita que el build de OpenNext (que invoca `pnpm build`) falle por la
-# comprobación de estado de dependencias.
 verifyDepsBeforeRun: false

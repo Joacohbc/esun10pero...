@@ -109,7 +109,7 @@ export function useSession({ code, playerId, name, color, onEvent }: UseSessionO
 			wsRef.current = null;
 		};
 		// Solo reconectar si cambia la sala o el jugador.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+
 	}, [code, playerId]);
 
 	return { state, status, error, send };

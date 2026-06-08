@@ -3,7 +3,6 @@
 // Runtime types generated with workerd@1.20260603.1 2026-06-07 global_fetch_strictly_public,nodejs_compat
 interface __BaseEnv_CloudflareEnv {
 	ASSETS: Fetcher;
-	NEXTJS_ENV: string;
 	POKER_SESSION: DurableObjectNamespace<import("./worker").PokerSessionDO>;
 }
 declare namespace Cloudflare {
@@ -14,12 +13,6 @@ declare namespace Cloudflare {
 	interface Env extends __BaseEnv_CloudflareEnv {}
 }
 interface CloudflareEnv extends __BaseEnv_CloudflareEnv {}
-type StringifyValues<EnvType extends Record<string, unknown>> = {
-	[Binding in keyof EnvType]: EnvType[Binding] extends string ? EnvType[Binding] : string;
-};
-declare namespace NodeJS {
-	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "NEXTJS_ENV">> {}
-}
 
 // Begin runtime types
 /*! *****************************************************************************
@@ -10263,7 +10256,7 @@ type AIGatewayHeaders = {
     [key: string]: string | number | boolean | object;
 };
 type AIGatewayUniversalRequest = {
-    provider: AIGatewayProviders | string; // eslint-disable-line
+    provider: AIGatewayProviders | string;
     endpoint: string;
     headers: Partial<AIGatewayHeaders>;
     query: unknown;
@@ -10280,7 +10273,7 @@ declare abstract class AiGateway {
         extraHeaders?: object;
         signal?: AbortSignal;
     }): Promise<Response>;
-    getUrl(provider?: AIGatewayProviders | string): Promise<string>; // eslint-disable-line
+    getUrl(provider?: AIGatewayProviders | string): Promise<string>;
 }
 // Copyright (c) 2022-2025 Cloudflare, Inc.
 // Licensed under the Apache 2.0 license found in the LICENSE file or at:

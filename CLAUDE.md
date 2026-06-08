@@ -5,31 +5,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-# Desarrollo local con solo Next.js (sin Cloudflare, más rápido)
-pnpm dev:next
+# Desarrollo local con Vite (sin Cloudflare)
+pnpm vite dev
 
 # Desarrollo completo con Cloudflare Workers (compila primero, luego wrangler dev)
 pnpm dev
 
 # Build de producción
 pnpm build
-
-# Deploy a Cloudflare
-pnpm deploy
 ```
 
-No hay tests automatizados. La verificación es manual via `pnpm dev:next`.
+No hay tests automatizados. La verificación es manual.
 
 ## Arquitectura
 
-**Next.js 16 desplegado en Cloudflare Workers** via `@opennextjs/cloudflare`. El estado del juego en tiempo real lo maneja un **Cloudflare Durable Object**.
+**React con Vite y TanStack Start desplegado en Cloudflare Workers**. El estado del juego en tiempo real lo maneja un **Cloudflare Durable Object**.
 
 ### Flujo de requests
 
 ```
 Browser
   └─ /api/ws/<CODE>  →  worker.ts  →  PokerSessionDO (Durable Object, binding POKER_SESSION)
-  └─ todo lo demás   →  worker.ts  →  Next.js handler (OpenNext)
+  └─ todo lo demás   →  worker.ts  →  Vite/TanStack handler
 ```
 
 ### Estado del juego
