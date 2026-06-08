@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card3D } from "@/components/Card3D";
 import { MASTER_DECK, SUITS, suitNameEs, VALUES, type Card } from "@/lib/cards";
 
@@ -12,6 +12,7 @@ function OfflinePage() {
 	const [flipped, setFlipped] = useState(false);
 	const [isFullscreen, setIsFullscreen] = useState(false);
 	const [isSelectorOpen, setIsSelectorOpen] = useState(false);
+	const [showCloseButton, setShowCloseButton] = useState(false);
 
 	const drawCard = () => {
 		const randomIndex = Math.floor(Math.random() * MASTER_DECK.length);
@@ -24,6 +25,15 @@ function OfflinePage() {
 			setFlipped(!flipped);
 		}
 	};
+
+	useEffect(() => {
+		if (showCloseButton) {
+			const timer = setTimeout(() => {
+				setShowCloseButton(false);
+			}, 3000);
+			return () => clearTimeout(timer);
+		}
+	}, [showCloseButton]);
 
 	return (
 		<div className="min-h-screen flex flex-col justify-between items-center px-6 py-8 gap-8">
@@ -78,7 +88,10 @@ function OfflinePage() {
 							{flipped ? "Ocultar" : "Revelar"}
 						</button>
 						<button
-							onClick={() => setIsFullscreen(true)}
+							onClick={() => {
+								setIsFullscreen(true);
+								setShowCloseButton(false);
+							}}
 							className="bg-neutral-950 border border-neutral-800 hover:bg-neutral-900 hover:border-neutral-700 active:scale-[0.98] text-neutral-200 py-3.5 px-4 rounded-xl font-bold tracking-wide transition-all cursor-pointer flex items-center justify-center gap-2"
 						>
 							<svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -116,25 +129,35 @@ function OfflinePage() {
 			{/* Fullscreen Overlay */}
 			{isFullscreen && card && (
 				<div
-					onClick={() => setIsFullscreen(false)}
-					className="fixed inset-0 bg-neutral-950/95 backdrop-blur-md z-50 flex flex-col items-center justify-center p-4 transition-all"
+					onClick={() => {
+						// On click anywhere in the fullscreen overlay, flip the card and show controls
+						toggleFlip();
+						setShowCloseButton(true);
+					}}
+					className="fixed inset-0 bg-neutral-950 z-50 flex flex-col items-center justify-center p-0 transition-all"
 				>
 					{/* Close button */}
-					<button
-						onClick={() => setIsFullscreen(false)}
-						className="absolute top-6 right-6 text-neutral-400 hover:text-white text-2xl bg-neutral-900 border border-neutral-800 hover:border-neutral-700 w-12 h-12 rounded-full flex items-center justify-center transition-colors cursor-pointer z-50"
-					>
-						✕
-					</button>
+					{showCloseButton && (
+						<button
+							onClick={(e) => {
+								e.stopPropagation();
+								setIsFullscreen(false);
+							}}
+							className="absolute top-6 right-6 text-neutral-400 hover:text-white text-2xl bg-neutral-900/80 backdrop-blur-sm border border-neutral-800 hover:border-neutral-700 w-12 h-12 rounded-full flex items-center justify-center transition-colors cursor-pointer z-50"
+						>
+							✕
+						</button>
+					)}
 
-					{/* Large Card */}
-					<div onClick={(e) => e.stopPropagation()} className="scale-110 sm:scale-125 md:scale-135 transition-transform duration-300">
-						<Card3D card={card} flipped={flipped} onClick={toggleFlip} />
+					{/* Fullscreen Card */}
+					<div className="w-full h-full transition-transform duration-300">
+						<Card3D
+							card={card}
+							flipped={flipped}
+							className="w-full h-[100dvh]"
+							innerClassName="rounded-none"
+						/>
 					</div>
-
-					<p className="text-neutral-500 text-xs mt-12 text-center pointer-events-none">
-						Toca la carta para voltearla. Toca fuera para salir de pantalla completa.
-					</p>
 				</div>
 			)}
 
