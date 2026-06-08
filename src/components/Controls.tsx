@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import type { ClientMessage, PublicGameState } from "@/lib/protocol";
 import { RatingInput } from "./RatingInput";
+import { ChooseCardModal } from "./ChooseCardModal";
 
 interface ControlsProps {
 	state: PublicGameState;
@@ -15,8 +17,11 @@ interface ControlsProps {
 
 /** Botonera de acciones según fase y rol. */
 export function Controls({ state, send, isHost, isHidden, soundEnabled, onToggleSound, onOpenVisor }: ControlsProps) {
+	const [chooseModalOpen, setChooseModalOpen] = useState(false);
 	const connectedCount = state.players.filter((p) => p.connected).length;
 	const migajeroName = state.players.find((p) => p.id === state.hiddenPlayerId)?.name;
+	const pendingMigajeroName = state.players.find((p) => p.id === state.pendingHiddenPlayerId)?.name;
+	const isPendingHidden = state.youId === state.pendingHiddenPlayerId;
 
 	return (
 		<div className="mt-8 flex flex-col items-center gap-4 w-full max-w-sm">
@@ -29,6 +34,30 @@ export function Controls({ state, send, isHost, isHidden, soundEnabled, onToggle
 				>
 					{connectedCount < 2 ? "Esperando jugadores…" : "Ser el migajero"}
 				</button>
+			)}
+
+			{state.phase === "choosingCard" && (
+				isPendingHidden ? (
+					<div className="w-full text-center py-4 px-6 bg-neutral-900 border border-neutral-800 rounded-xl">
+						<p className="text-sm font-semibold text-neutral-300">Esperando a que los demás elijan una carta...</p>
+					</div>
+				) : (
+					<div className="w-full flex flex-col gap-2">
+						<p className="text-xs text-center text-neutral-400 mb-2">Elige el tipo de carta para {pendingMigajeroName}</p>
+						<button
+							onClick={() => send({ type: "chooseCard", cardId: "random" })}
+							className="w-full bg-neutral-100 hover:bg-white text-neutral-900 active:scale-[0.98] py-3 px-6 rounded-xl font-bold tracking-wide shadow-md transition-all"
+						>
+							Sacar Carta Aleatoria
+						</button>
+						<button
+							onClick={() => setChooseModalOpen(true)}
+							className="w-full bg-neutral-800 hover:bg-neutral-700 text-white active:scale-[0.98] py-3 px-6 rounded-xl font-bold tracking-wide transition-all border border-neutral-700"
+						>
+							Elegir Carta Específica
+						</button>
+					</div>
+				)
 			)}
 
 			{state.phase === "playing" &&
@@ -125,6 +154,13 @@ export function Controls({ state, send, isHost, isHidden, soundEnabled, onToggle
 					Reiniciar ronda
 				</button>
 			)}
+
+			<ChooseCardModal
+				open={chooseModalOpen}
+				onClose={() => setChooseModalOpen(false)}
+				excludedCardIds={state.excludedCardIds}
+				send={send}
+			/>
 		</div>
 	);
 }

@@ -16,6 +16,7 @@ interface GameState {
 	players: RosterPlayer[];
 	hostId: string | null;
 	hiddenPlayerId: string | null;
+	pendingHiddenPlayerId: string | null;
 	deck: CardId[];
 	excludedCardIds: CardId[];
 	currentCardId: CardId | null;
@@ -36,6 +37,7 @@ function defaultState(): GameState {
 		players: [],
 		hostId: null,
 		hiddenPlayerId: null,
+		pendingHiddenPlayerId: null,
 		deck: [],
 		excludedCardIds: [],
 		currentCardId: null,
@@ -122,6 +124,8 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 			case "volunteerHidden":
 			case "becomeMigajero":
 				return this.onVolunteerHidden(ws);
+			case "chooseCard":
+				return this.onChooseCard(ws, msg.cardId);
 			case "reveal":
 				return this.onReveal(ws);
 			case "submitRating":
@@ -162,7 +166,33 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 		if (this.game.phase !== "lobby") throw new Error("La ronda ya está en curso");
 		if (this.connectedPlayerIds().size < 2) throw new Error("Se necesitan al menos 2 jugadores");
 
-		this.startRound(playerId);
+		this.game.phase = "choosingCard";
+		this.game.pendingHiddenPlayerId = playerId;
+		await this.persistAndBroadcast();
+	}
+
+	private async onChooseCard(ws: WebSocket, cardId: CardId | "random"): Promise<void> {
+		const playerId = this.playerIdOf(ws);
+		if (!playerId) throw new Error("No identificado");
+		if (this.game.phase !== "choosingCard") throw new Error("No es el momento de elegir carta");
+		if (playerId === this.game.pendingHiddenPlayerId) throw new Error("El migajero no puede elegir la carta");
+		if (!this.game.pendingHiddenPlayerId) throw new Error("No hay jugador oculto pendiente");
+
+		const hiddenPlayerId = this.game.pendingHiddenPlayerId;
+
+		if (cardId === "random") {
+			this.startRound(hiddenPlayerId);
+		} else {
+			this.game.currentCardId = cardId;
+			this.game.hiddenPlayerId = hiddenPlayerId;
+			this.game.phase = "playing";
+			this.game.revealedById = null;
+			this.game.votes = {};
+			this.game.migajeroRating = null;
+			this.broadcastEvent("flip");
+		}
+
+		this.game.pendingHiddenPlayerId = null;
 		await this.persistAndBroadcast();
 	}
 
@@ -241,6 +271,7 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 		this.assertHost(ws);
 		this.game.phase = "lobby";
 		this.game.hiddenPlayerId = null;
+		this.game.pendingHiddenPlayerId = null;
 		this.game.currentCardId = null;
 		this.game.revealedById = null;
 		this.game.votes = {};
@@ -359,6 +390,7 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 			players,
 			hostId: this.game.hostId,
 			hiddenPlayerId: this.game.hiddenPlayerId,
+			pendingHiddenPlayerId: this.game.pendingHiddenPlayerId,
 			currentCard,
 			deckCount: this.game.deck.length,
 			activeCount: baseCount - this.game.excludedCardIds.length,
