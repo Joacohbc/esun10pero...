@@ -1,8 +1,8 @@
-<h1 align="center">Es un 10 pero...</h1>
+<h1 align="center">Es un 10, pero...</h1>
 
 <p align="center">
-  <strong>¿Qué le perdonarías a un 10? ¡Descúbrelo con tus amigos!</strong><br>
-  Una aplicación web ideal para jugar en grupo, donde pueden debatir, votar y ponerle nota a esas situaciones incómodas o graciosas del clásico juego "es un 10 pero...".
+  <strong>¿Es realmente el amor ciego? Pon a prueba los estándares de tus amigos.</strong><br>
+  Imagina encontrar a la persona perfecta, un 10 absoluto... pero resulta que aplaude cuando aterriza el avión. ¿Qué nota le pones ahora? Basado en el fenómeno viral, esta aplicación web te permite crear salas multijugador en tiempo real para debatir, votar y arruinar puntuaciones perfectas con tus amigos. Una experiencia de juego con un diseño minimalista, rápido y enfocado 100% en la polémica y la diversión.
 </p>
 
 ## Built With
