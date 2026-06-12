@@ -1,11 +1,23 @@
-import type { Card } from "@/lib/cards";
+import { cardNumericValue, type Card } from "@/lib/cards";
 
 /** Cara de la carta (valor + palo), portada del markup original. */
 export function CardFront({ card, roundedClassName }: { card: Card; roundedClassName?: string }) {
+	// Para A/J/Q/K mostramos el número equivalente (1, 11, 12, 13).
+	const isFace = Number.isNaN(parseInt(card.value, 10));
+	const numericValue = isFace ? cardNumericValue(card) : null;
+
 	return (
 		<div
 			className={`absolute inset-0 w-full h-full backface-hidden rotate-y-180 bg-white border border-neutral-200 ${card.suit.color} ${roundedClassName ?? "rounded-2xl"} flex flex-col justify-between p-5 select-none`}
 		>
+			{/* Número equivalente en las esquinas opuestas (sup. der. e inf. izq.) */}
+			{numericValue !== null && (
+				<>
+					<span className="absolute top-2 right-3 text-xs font-semibold leading-none opacity-70">{numericValue}</span>
+					<span className="absolute bottom-2 left-3 text-xs font-semibold leading-none opacity-70 rotate-180">{numericValue}</span>
+				</>
+			)}
+
 			{/* Esquina superior izquierda */}
 			<div className="flex flex-col items-center justify-start w-fit">
 				<span className="text-3xl font-extrabold leading-none tracking-tighter">{card.value}</span>
