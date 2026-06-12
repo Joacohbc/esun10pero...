@@ -13,8 +13,8 @@ export function CardFront({ card, roundedClassName }: { card: Card; roundedClass
 			{/* Número equivalente en las esquinas opuestas (sup. der. e inf. izq.) */}
 			{numericValue !== null && (
 				<>
-					<span className="absolute top-2 right-3 text-xs font-semibold leading-none opacity-70">{numericValue}</span>
-					<span className="absolute bottom-2 left-3 text-xs font-semibold leading-none opacity-70 rotate-180">{numericValue}</span>
+					<span className="absolute top-5 right-5 text-xs font-semibold leading-none opacity-70">{numericValue}</span>
+					<span className="absolute bottom-5 left-5 text-xs font-semibold leading-none opacity-70 rotate-180">{numericValue}</span>
 				</>
 			)}
 
