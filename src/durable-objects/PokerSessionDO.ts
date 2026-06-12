@@ -98,17 +98,19 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 		}
 	}
 
-	async webSocketClose(_ws: WebSocket): Promise<void> {
+	async webSocketClose(ws: WebSocket): Promise<void> {
 		// El jugador se desconecta; lo dejamos en el roster (puede reconectar).
-		this.reassignHostIfNeeded();
-		await this.persistAndBroadcast();
-		await this.scheduleCleanupIfEmpty();
+		// El socket que se cierra todavía aparece en getWebSockets() durante este
+		// handler, así que lo excluimos para que el resto lo vea desconectado al instante.
+		this.reassignHostIfNeeded(ws);
+		await this.persistAndBroadcast(ws);
+		await this.scheduleCleanupIfEmpty(ws);
 	}
 
-	async webSocketError(_ws: WebSocket): Promise<void> {
-		this.reassignHostIfNeeded();
-		await this.persistAndBroadcast();
-		await this.scheduleCleanupIfEmpty();
+	async webSocketError(ws: WebSocket): Promise<void> {
+		this.reassignHostIfNeeded(ws);
+		await this.persistAndBroadcast(ws);
+		await this.scheduleCleanupIfEmpty(ws);
 	}
 
 	async alarm(): Promise<void> {
@@ -363,17 +365,18 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 		return att?.playerId ?? null;
 	}
 
-	private connectedPlayerIds(): Set<string> {
+	private connectedPlayerIds(exclude?: WebSocket): Set<string> {
 		const ids = new Set<string>();
 		for (const ws of this.ctx.getWebSockets()) {
+			if (ws === exclude) continue;
 			const id = this.playerIdOf(ws);
 			if (id) ids.add(id);
 		}
 		return ids;
 	}
 
-	private reassignHostIfNeeded(): void {
-		const connected = this.connectedPlayerIds();
+	private reassignHostIfNeeded(exclude?: WebSocket): void {
+		const connected = this.connectedPlayerIds(exclude);
 		if (this.game.hostId && connected.has(this.game.hostId)) return;
 		// Host actual desconectado: pasa al primer jugador conectado en orden de roster.
 		const next = this.game.players.find((p) => connected.has(p.id));
@@ -449,18 +452,19 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 		for (const ws of this.ctx.getWebSockets()) this.send(ws, msg);
 	}
 
-	private async scheduleCleanupIfEmpty(): Promise<void> {
-		if (this.connectedPlayerIds().size === 0) {
+	private async scheduleCleanupIfEmpty(exclude?: WebSocket): Promise<void> {
+		if (this.connectedPlayerIds(exclude).size === 0) {
 			await this.ctx.storage.setAlarm(Date.now() + 60 * 60 * 1000);
 		} else {
 			await this.ctx.storage.deleteAlarm();
 		}
 	}
 
-	private async persistAndBroadcast(): Promise<void> {
+	private async persistAndBroadcast(exclude?: WebSocket): Promise<void> {
 		await this.ctx.storage.put("game", this.game);
-		const connected = this.connectedPlayerIds();
+		const connected = this.connectedPlayerIds(exclude);
 		for (const ws of this.ctx.getWebSockets()) {
+			if (ws === exclude) continue;
 			const playerId = this.playerIdOf(ws);
 			if (!playerId) continue;
 			this.send(ws, { type: "state", state: this.publicStateFor(playerId, connected) });
