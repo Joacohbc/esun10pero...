@@ -11,11 +11,15 @@ import { VisorModal } from "./VisorModal";
 import { VotePanel } from "./VotePanel";
 import { ScoreDisplay } from "./ScoreDisplay";
 import { useDynamicFavicon } from "@/hooks/useDynamicFavicon";
+import { randomPigeonName } from "@/lib/names";
 import type { CardMode } from "@/lib/protocol";
 
 /** Pide el nombre si el jugador entró por enlace directo sin haberlo fijado. */
 function NamePrompt({ onSubmit }: { onSubmit: (name: string) => void }) {
 	const [name, setName] = useState("");
+	// Nombre por defecto (científico de paloma + pan) si lo deja vacío.
+	const [defaultName] = useState(randomPigeonName);
+	const submit = () => onSubmit(name.trim() || defaultName);
 	return (
 		<div className="min-h-screen flex flex-col items-center justify-center p-6 gap-4">
 			<h1 className="text-lg font-semibold text-neutral-100">¿Cómo te llamas?</h1>
@@ -25,16 +29,17 @@ function NamePrompt({ onSubmit }: { onSubmit: (name: string) => void }) {
 					value={name}
 					onChange={(e) => setName(e.target.value)}
 					maxLength={24}
-					placeholder="Tu nombre"
+					placeholder={defaultName}
 					className="flex-1 min-w-0 bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-neutral-100 placeholder:text-neutral-600 focus:outline-none focus:border-neutral-600"
 					onKeyDown={(e) => {
-						if (e.key === "Enter" && name.trim()) onSubmit(name.trim());
+						if (e.key === "Enter") submit();
 					}}
 				/>
-				<button onClick={() => name.trim() && onSubmit(name.trim())} className="bg-neutral-100 hover:bg-white text-neutral-900 px-5 rounded-xl font-bold transition-all">
+				<button onClick={submit} className="bg-neutral-100 hover:bg-white text-neutral-900 px-5 rounded-xl font-bold transition-all">
 					Entrar
 				</button>
 			</div>
+			<p className="text-[10px] text-neutral-600">Si lo dejas vacío te tocará un nombre de paloma al azar.</p>
 		</div>
 	);
 }

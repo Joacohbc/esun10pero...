@@ -2,6 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { getIdentity, setName as persistName, setColor as persistColor } from "@/lib/identity";
 import { generateCode, isValidCode, type CardMode } from "@/lib/protocol";
+import { randomPigeonName } from "@/lib/names";
 import { PalomaSVG, PIGEON_COLORS, DEFAULT_COLOR } from "@/components/PalomaSVG";
 import { useDynamicFavicon } from "@/hooks/useDynamicFavicon";
 
@@ -12,6 +13,8 @@ export function JoinForm() {
 	const [code, setCode] = useState("");
 	const [cardMode, setCardMode] = useState<CardMode>("choose");
 	const [error, setError] = useState<string | null>(null);
+	// Nombre por defecto (científico de paloma + pan) si el jugador no escribe ninguno.
+	const [defaultName] = useState(randomPigeonName);
 
 	useDynamicFavicon(color);
 
@@ -22,12 +25,9 @@ export function JoinForm() {
 	}, []);
 
 	const go = (targetCode: string, mode?: CardMode) => {
-		const trimmed = name.trim();
-		if (!trimmed) {
-			setError("Escribe tu nombre");
-			return;
-		}
-		persistName(trimmed);
+		// Si no escribe nombre, se le asigna uno por defecto de paloma.
+		const finalName = name.trim() || defaultName;
+		persistName(finalName);
 		navigate({ to: `/session/${targetCode}`, search: mode ? { mode } : {} });
 	};
 
@@ -99,9 +99,10 @@ export function JoinForm() {
 						setError(null);
 					}}
 					maxLength={24}
-					placeholder="Ej. Joaco"
+					placeholder={defaultName}
 					className="bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-neutral-100 placeholder:text-neutral-600 focus:outline-none focus:border-neutral-600"
 				/>
+				<p className="text-[10px] text-neutral-600">Si lo dejas vacío te tocará un nombre de paloma al azar.</p>
 			</div>
 
 			{/* Modo de carta: se fija al crear la sala y no se puede cambiar después. */}
