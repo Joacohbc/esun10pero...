@@ -172,16 +172,7 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 		if (this.game.phase !== "lobby") throw new Error("La ronda ya está en curso");
 		if (this.connectedPlayerIds().size < 2) throw new Error("Se necesitan al menos 2 jugadores");
 
-		// En modo aleatorio se salta la fase de elección: se saca carta al instante.
-		if (this.game.cardMode === "random") {
-			this.startRound(playerId);
-			this.game.pendingHiddenPlayerId = null;
-			await this.persistAndBroadcast();
-			return;
-		}
-
-		this.game.phase = "choosingCard";
-		this.game.pendingHiddenPlayerId = playerId;
+		this.beginRoundFor(playerId);
 		await this.persistAndBroadcast();
 	}
 
@@ -252,7 +243,7 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 		const everyoneVoted = [...connected].every((id) => this.game.votes[id] !== undefined);
 		if (everyoneVoted && connected.size > 0) {
 			const winner = this.tallyVotes(connected);
-			this.startRound(winner);
+			this.beginRoundFor(winner);
 		}
 		await this.persistAndBroadcast();
 	}
@@ -294,6 +285,28 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 	}
 
 	// ---- Lógica de juego ----
+
+	/**
+	 * Arranca la siguiente ronda para `hiddenPlayerId` respetando el modo de la sala.
+	 * Es el único punto que decide entre sacar carta o pedir que la elijan, así que
+	 * aplica por igual al voluntario inicial y al ganador de la votación.
+	 */
+	private beginRoundFor(hiddenPlayerId: string): void {
+		if (this.game.cardMode === "random") {
+			// Modo aleatorio: se saca la carta al instante.
+			this.startRound(hiddenPlayerId);
+			this.game.pendingHiddenPlayerId = null;
+			return;
+		}
+		// Modo elegir: pasa a "choosingCard" para que los demás elijan la carta.
+		this.game.phase = "choosingCard";
+		this.game.pendingHiddenPlayerId = hiddenPlayerId;
+		this.game.hiddenPlayerId = null;
+		this.game.currentCardId = null;
+		this.game.revealedById = null;
+		this.game.votes = {};
+		this.game.migajeroRating = null;
+	}
 
 	private startRound(hiddenPlayerId: string): void {
 		if (this.game.deck.length === 0) {
