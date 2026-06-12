@@ -11,6 +11,7 @@ import { VisorModal } from "./VisorModal";
 import { VotePanel } from "./VotePanel";
 import { ScoreDisplay } from "./ScoreDisplay";
 import { useDynamicFavicon } from "@/hooks/useDynamicFavicon";
+import type { CardMode } from "@/lib/protocol";
 
 /** Pide el nombre si el jugador entró por enlace directo sin haberlo fijado. */
 function NamePrompt({ onSubmit }: { onSubmit: (name: string) => void }) {
@@ -38,7 +39,7 @@ function NamePrompt({ onSubmit }: { onSubmit: (name: string) => void }) {
 	);
 }
 
-export function SessionRoom({ code }: { code: string }) {
+export function SessionRoom({ code, cardMode }: { code: string; cardMode?: CardMode }) {
 	const navigate = useNavigate();
 	const [identity, setIdentity] = useState(() => ({ playerId: "", name: "", color: "#9CA3AF" }));
 	const [ready, setReady] = useState(false);
@@ -78,6 +79,7 @@ export function SessionRoom({ code }: { code: string }) {
 		playerId: ready ? identity.playerId : "",
 		name: identity.name,
 		color: identity.color,
+		cardMode,
 		onEvent,
 	});
 

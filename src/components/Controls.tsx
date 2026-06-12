@@ -43,16 +43,10 @@ export function Controls({ state, send, isHost, isHidden, soundEnabled, onToggle
 					</div>
 				) : (
 					<div className="w-full flex flex-col gap-2">
-						<p className="text-xs text-center text-neutral-400 mb-2">Elige el tipo de carta para {pendingMigajeroName}</p>
-						<button
-							onClick={() => send({ type: "chooseCard", cardId: "random" })}
-							className="w-full bg-neutral-100 hover:bg-white text-neutral-900 active:scale-[0.98] py-3 px-6 rounded-xl font-bold tracking-wide shadow-md transition-all"
-						>
-							Sacar Carta Aleatoria
-						</button>
+						<p className="text-xs text-center text-neutral-400 mb-2">Elige una carta para {pendingMigajeroName}</p>
 						<button
 							onClick={() => setChooseModalOpen(true)}
-							className="w-full bg-neutral-800 hover:bg-neutral-700 text-white active:scale-[0.98] py-3 px-6 rounded-xl font-bold tracking-wide transition-all border border-neutral-700"
+							className="w-full bg-neutral-100 hover:bg-white text-neutral-900 active:scale-[0.98] py-3 px-6 rounded-xl font-bold tracking-wide shadow-md transition-all"
 						>
 							Elegir Carta Específica
 						</button>

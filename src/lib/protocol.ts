@@ -2,6 +2,13 @@ import type { Card, CardId } from "./cards";
 
 export type Phase = "lobby" | "choosingCard" | "playing" | "revealed" | "selecting";
 
+/**
+ * Modo de la sala fijado al CREARLA (no se puede cambiar después):
+ * - `random`: al ser migajero se saca una carta aleatoria al instante.
+ * - `choose`: los demás eligen una carta específica para el migajero.
+ */
+export type CardMode = "random" | "choose";
+
 export interface PublicPlayer {
 	id: string;
 	name: string;
@@ -41,12 +48,16 @@ export interface PublicGameState {
 	cardNumericValue: number | null;
 	/** true = mazo solo 1-10; false = mazo completo 52 cartas. */
 	simpleOnly: boolean;
+	/** Modo de carta fijado al crear la sala (inmutable). */
+	cardMode: CardMode;
 }
 
 // ---- Mensajes Cliente -> Servidor ----
 
 export type ClientMessage =
-	| { type: "join"; playerId: string; name: string; color: string }
+	// `cardMode` solo lo envía el creador de la sala; se aplica una única vez
+	// al establecer el host y se ignora en joins posteriores.
+	| { type: "join"; playerId: string; name: string; color: string; cardMode?: CardMode }
 	| { type: "volunteerHidden" }
 	| { type: "chooseCard"; cardId: CardId | "random" }
 	| { type: "becomeMigajero" }

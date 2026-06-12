@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { ClientMessage, PublicGameState, ServerMessage } from "@/lib/protocol";
+import type { CardMode, ClientMessage, PublicGameState, ServerMessage } from "@/lib/protocol";
 
 export type ConnectionStatus = "connecting" | "open" | "closed";
 
@@ -10,6 +10,8 @@ interface UseSessionOptions {
 	playerId: string;
 	name: string;
 	color: string;
+	/** Solo lo envía el creador de la sala: fija el modo de carta al crearla. */
+	cardMode?: CardMode;
 	/** Eventos efímeros del servidor para animación/sonido. */
 	onEvent?: (event: "flip" | "shuffle" | "empty") => void;
 }
@@ -30,7 +32,7 @@ function wsUrl(code: string): string {
  * Mantiene la conexión WebSocket con el Durable Object de la sala.
  * Reenvía `join` al abrir, reconecta con backoff y expone `send`.
  */
-export function useSession({ code, playerId, name, color, onEvent }: UseSessionOptions): UseSessionResult {
+export function useSession({ code, playerId, name, color, cardMode, onEvent }: UseSessionOptions): UseSessionResult {
 	const [state, setState] = useState<PublicGameState | null>(null);
 	const [status, setStatus] = useState<ConnectionStatus>("connecting");
 	const [error, setError] = useState<string | null>(null);
@@ -39,9 +41,9 @@ export function useSession({ code, playerId, name, color, onEvent }: UseSessionO
 	const reconnectRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const closedByUs = useRef(false);
 	// Guardamos los datos de join en refs para no reconectar al cambiar el nombre.
-	const joinRef = useRef({ playerId, name, color });
+	const joinRef = useRef({ playerId, name, color, cardMode });
 	const onEventRef = useRef(onEvent);
-	joinRef.current = { playerId, name, color };
+	joinRef.current = { playerId, name, color, cardMode };
 	onEventRef.current = onEvent;
 
 	const send = useCallback((msg: ClientMessage) => {
@@ -69,7 +71,7 @@ export function useSession({ code, playerId, name, color, onEvent }: UseSessionO
 			ws.onopen = () => {
 				setStatus("open");
 				setError(null);
-				ws.send(JSON.stringify({ type: "join", playerId: joinRef.current.playerId, name: joinRef.current.name, color: joinRef.current.color } satisfies ClientMessage));
+				ws.send(JSON.stringify({ type: "join", playerId: joinRef.current.playerId, name: joinRef.current.name, color: joinRef.current.color, cardMode: joinRef.current.cardMode } satisfies ClientMessage));
 			};
 
 			ws.onmessage = (ev) => {

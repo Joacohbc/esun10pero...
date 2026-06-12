@@ -1,7 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { getIdentity, setName as persistName, setColor as persistColor } from "@/lib/identity";
-import { generateCode, isValidCode } from "@/lib/protocol";
+import { generateCode, isValidCode, type CardMode } from "@/lib/protocol";
 import { PalomaSVG, PIGEON_COLORS, DEFAULT_COLOR } from "@/components/PalomaSVG";
 import { useDynamicFavicon } from "@/hooks/useDynamicFavicon";
 
@@ -10,6 +10,7 @@ export function JoinForm() {
 	const [name, setName] = useState("");
 	const [color, setColor] = useState(DEFAULT_COLOR);
 	const [code, setCode] = useState("");
+	const [cardMode, setCardMode] = useState<CardMode>("choose");
 	const [error, setError] = useState<string | null>(null);
 
 	useDynamicFavicon(color);
@@ -20,14 +21,14 @@ export function JoinForm() {
 		setColor(id.color);
 	}, []);
 
-	const go = (targetCode: string) => {
+	const go = (targetCode: string, mode?: CardMode) => {
 		const trimmed = name.trim();
 		if (!trimmed) {
 			setError("Escribe tu nombre");
 			return;
 		}
 		persistName(trimmed);
-		navigate({ to: `/session/${targetCode}` });
+		navigate({ to: `/session/${targetCode}`, search: mode ? { mode } : {} });
 	};
 
 	const handleColorChange = (hex: string) => {
@@ -35,7 +36,7 @@ export function JoinForm() {
 		persistColor(hex);
 	};
 
-	const handleCreate = () => go(generateCode());
+	const handleCreate = () => go(generateCode(), cardMode);
 
 	const handleJoin = () => {
 		const clean = code.trim().toUpperCase();
@@ -101,6 +102,52 @@ export function JoinForm() {
 					placeholder="Ej. Joaco"
 					className="bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-neutral-100 placeholder:text-neutral-600 focus:outline-none focus:border-neutral-600"
 				/>
+			</div>
+
+			{/* Modo de carta: se fija al crear la sala y no se puede cambiar después. */}
+			<div className="flex flex-col gap-2">
+				<label className="text-xs text-neutral-500 font-semibold uppercase tracking-wider">Modo de carta</label>
+				<div className="relative flex h-12 bg-neutral-900 border border-neutral-800 rounded-xl select-none">
+					{/* Pastilla deslizante */}
+					<span
+						aria-hidden
+						className={`absolute top-1 bottom-1 left-1 w-[calc(50%-0.5rem)] rounded-lg bg-red-500 shadow-md transition-transform duration-300 ease-out ${
+							cardMode === "random" ? "translate-x-[calc(100%+0.5rem)]" : "translate-x-0"
+						}`}
+					/>
+					<button
+						onClick={() => setCardMode("choose")}
+						className={`relative z-10 flex-1 flex items-center justify-center gap-1.5 rounded-lg text-xs font-semibold transition-colors ${
+							cardMode === "choose" ? "text-white" : "text-neutral-400 hover:text-neutral-200"
+						}`}
+						title="Los demás eligen la carta para el migajero"
+					>
+						<svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+							<path strokeLinecap="round" strokeLinejoin="round" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+						</svg>
+						Elegir carta
+					</button>
+					<button
+						onClick={() => setCardMode("random")}
+						className={`relative z-10 flex-1 flex items-center justify-center gap-1.5 rounded-lg text-xs font-semibold transition-colors ${
+							cardMode === "random" ? "text-white" : "text-neutral-400 hover:text-neutral-200"
+						}`}
+						title="Al ser migajero se saca una carta al azar al instante"
+					>
+						<svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+							<rect x="4" y="4" width="16" height="16" rx="3" />
+							<circle cx="9" cy="9" r="1" fill="currentColor" stroke="none" />
+							<circle cx="15" cy="9" r="1" fill="currentColor" stroke="none" />
+							<circle cx="12" cy="12" r="1" fill="currentColor" stroke="none" />
+							<circle cx="9" cy="15" r="1" fill="currentColor" stroke="none" />
+							<circle cx="15" cy="15" r="1" fill="currentColor" stroke="none" />
+						</svg>
+						Aleatorio
+					</button>
+				</div>
+				<p className="text-[10px] text-neutral-600 text-center">
+					{cardMode === "choose" ? "Los demás eligen la carta del migajero." : "Se saca una carta al azar automáticamente."} Se fija al crear la sala.
+				</p>
 			</div>
 
 			<button

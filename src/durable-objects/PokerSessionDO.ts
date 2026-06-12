@@ -1,7 +1,7 @@
 import { DurableObject } from "cloudflare:workers";
 import { getCard, cardNumericValue, SUITS, SIMPLE_VALUES, TOTAL_CARDS, type CardId } from "@/lib/cards";
 import { buildDeck } from "@/lib/deck";
-import type { ClientMessage, Phase, PublicGameState, PublicPlayer, ServerMessage } from "@/lib/protocol";
+import type { CardMode, ClientMessage, Phase, PublicGameState, PublicPlayer, ServerMessage } from "@/lib/protocol";
 
 interface RosterPlayer {
 	id: string;
@@ -24,6 +24,7 @@ interface GameState {
 	votes: Record<string, string>;
 	migajeroRating: number | null;
 	simpleOnly: boolean;
+	cardMode: CardMode;
 }
 
 interface SocketAttachment {
@@ -45,6 +46,7 @@ function defaultState(): GameState {
 		votes: {},
 		migajeroRating: null,
 		simpleOnly: false,
+		cardMode: "choose",
 	};
 }
 
@@ -120,7 +122,7 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 	private async handle(ws: WebSocket, msg: ClientMessage): Promise<void> {
 		switch (msg.type) {
 			case "join":
-				return this.onJoin(ws, msg.playerId, msg.name, msg.color);
+				return this.onJoin(ws, msg.playerId, msg.name, msg.color, msg.cardMode);
 			case "volunteerHidden":
 			case "becomeMigajero":
 				return this.onVolunteerHidden(ws);
@@ -143,7 +145,7 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 		}
 	}
 
-	private async onJoin(ws: WebSocket, playerId: string, name: string, color: string): Promise<void> {
+	private async onJoin(ws: WebSocket, playerId: string, name: string, color: string, cardMode?: CardMode): Promise<void> {
 		const cleanName = name.trim().slice(0, 24) || "Jugador";
 		ws.serializeAttachment({ playerId } satisfies SocketAttachment);
 
@@ -154,7 +156,11 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 		} else {
 			this.game.players.push({ id: playerId, name: cleanName, color });
 		}
-		if (!this.game.hostId) this.game.hostId = playerId;
+		// El modo de carta se fija una sola vez, al crear la sala (primer host).
+		if (!this.game.hostId) {
+			this.game.hostId = playerId;
+			if (cardMode === "random" || cardMode === "choose") this.game.cardMode = cardMode;
+		}
 
 		await this.ctx.storage.deleteAlarm();
 		await this.persistAndBroadcast();
@@ -165,6 +171,14 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 		if (!playerId) throw new Error("No identificado");
 		if (this.game.phase !== "lobby") throw new Error("La ronda ya está en curso");
 		if (this.connectedPlayerIds().size < 2) throw new Error("Se necesitan al menos 2 jugadores");
+
+		// En modo aleatorio se salta la fase de elección: se saca carta al instante.
+		if (this.game.cardMode === "random") {
+			this.startRound(playerId);
+			this.game.pendingHiddenPlayerId = null;
+			await this.persistAndBroadcast();
+			return;
+		}
 
 		this.game.phase = "choosingCard";
 		this.game.pendingHiddenPlayerId = playerId;
@@ -401,6 +415,7 @@ export class PokerSessionDO extends DurableObject<CloudflareEnv> {
 			migajeroRating: this.game.migajeroRating,
 			cardNumericValue: cardNumericVal,
 			simpleOnly: this.game.simpleOnly,
+			cardMode: this.game.cardMode,
 		};
 	}
 
