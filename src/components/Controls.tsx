@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { ClientMessage, PublicGameState } from "@/lib/protocol";
 import { RatingInput } from "./RatingInput";
 import { ChooseCardModal } from "./ChooseCardModal";
+import { SlideToggle } from "./SlideToggle";
 
 interface ControlsProps {
 	state: PublicGameState;
@@ -30,7 +31,7 @@ export function Controls({ state, send, isHost, isHidden, soundEnabled, onToggle
 				<button
 					onClick={() => send({ type: "volunteerHidden" })}
 					disabled={connectedCount < 2}
-					className="w-full bg-neutral-100 hover:bg-white text-neutral-900 active:scale-[0.98] py-4 px-6 rounded-xl font-bold tracking-wide shadow-md transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+					className="w-full bg-primary hover:opacity-90 text-primary-fg active:scale-[0.99] py-3.5 px-6 rounded-xl text-sm font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed"
 				>
 					{connectedCount < 2 ? "Esperando jugadores…" : "Ser el migajero"}
 				</button>
@@ -38,15 +39,15 @@ export function Controls({ state, send, isHost, isHidden, soundEnabled, onToggle
 
 			{state.phase === "choosingCard" && (
 				isPendingHidden ? (
-					<div className="w-full text-center py-4 px-6 bg-neutral-900 border border-neutral-800 rounded-xl">
-						<p className="text-sm font-semibold text-neutral-300">Esperando a que los demás elijan una carta...</p>
+					<div className="w-full text-center py-4 px-6 bg-surface border border-border rounded-xl">
+						<p className="text-sm font-semibold text-fg">Esperando a que los demás elijan una carta...</p>
 					</div>
 				) : (
 					<div className="w-full flex flex-col gap-2">
-						<p className="text-xs text-center text-neutral-400 mb-2">Elige una carta para {pendingMigajeroName}</p>
+						<p className="text-xs text-center text-muted mb-2">Elige una carta para {pendingMigajeroName}</p>
 						<button
 							onClick={() => setChooseModalOpen(true)}
-							className="w-full bg-neutral-100 hover:bg-white text-neutral-900 active:scale-[0.98] py-3 px-6 rounded-xl font-bold tracking-wide shadow-md transition-all"
+							className="w-full bg-primary hover:opacity-90 text-primary-fg active:scale-[0.99] py-3 px-6 rounded-xl text-sm font-semibold transition-all"
 						>
 							Elegir Carta Específica
 						</button>
@@ -61,7 +62,7 @@ export function Controls({ state, send, isHost, isHidden, soundEnabled, onToggle
 					<button
 						onClick={() => send({ type: "reveal" })}
 						disabled={state.migajeroRating === null && !isHost}
-						className="w-full bg-red-500 hover:bg-red-600 disabled:opacity-40 disabled:cursor-not-allowed text-white active:scale-[0.98] py-4 px-6 rounded-xl font-bold tracking-wide shadow-md transition-all"
+						className="w-full bg-primary hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed text-primary-fg active:scale-[0.99] py-3.5 px-6 rounded-xl text-sm font-semibold transition-all"
 					>
 						{state.migajeroRating === null
 							? `Esperando valoración de ${migajeroName ?? "el migajero"}…`
@@ -70,7 +71,7 @@ export function Controls({ state, send, isHost, isHidden, soundEnabled, onToggle
 				))}
 
 			{state.phase === "revealed" && (
-				<div className="w-full text-center py-2 text-sm text-neutral-400">
+				<div className="w-full text-center py-2 text-sm text-muted">
 					Carta revelada. Voten quién no verá la próxima.
 				</div>
 			)}
@@ -80,7 +81,7 @@ export function Controls({ state, send, isHost, isHidden, soundEnabled, onToggle
 				<button
 					onClick={() => send({ type: "shuffle" })}
 					disabled={!isHost || state.phase !== "lobby"}
-					className="bg-neutral-900 hover:bg-neutral-800 text-neutral-300 py-3 rounded-xl text-xs font-semibold border border-neutral-800 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+					className="bg-transparent hover:bg-surface text-muted hover:text-fg py-3 rounded-xl text-xs font-medium border border-border transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
 					title={!isHost ? "Solo el host" : state.phase !== "lobby" ? "Solo en el lobby" : "Barajar mazo"}
 				>
 					Barajar
@@ -88,14 +89,14 @@ export function Controls({ state, send, isHost, isHidden, soundEnabled, onToggle
 				<button
 					onClick={onOpenVisor}
 					disabled={!isHost || state.phase !== "lobby"}
-					className="bg-neutral-900 hover:bg-neutral-800 text-neutral-300 py-3 rounded-xl text-xs font-semibold border border-neutral-800 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+					className="bg-transparent hover:bg-surface text-muted hover:text-fg py-3 rounded-xl text-xs font-medium border border-border transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
 					title={!isHost ? "Solo el host" : state.phase !== "lobby" ? "Solo en el lobby" : "Visor y exclusiones"}
 				>
 					Visor / Excluir
 				</button>
 				<button
 					onClick={onToggleSound}
-					className={`bg-neutral-900 hover:bg-neutral-800 text-neutral-300 py-3 rounded-xl text-xs font-semibold border border-neutral-800 transition-all flex items-center justify-center gap-1.5 ${soundEnabled ? "" : "opacity-50"}`}
+					className={`bg-transparent hover:bg-surface text-muted hover:text-fg py-3 rounded-xl text-xs font-medium border border-border transition-colors flex items-center justify-center gap-1.5 ${soundEnabled ? "" : "opacity-50"}`}
 					title="Alternar sonido"
 				>
 					{soundEnabled ? (
@@ -112,39 +113,23 @@ export function Controls({ state, send, isHost, isHidden, soundEnabled, onToggle
 			</div>
 
 			{isHost && (
-				<div className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-3">
-					<p className="text-[10px] text-neutral-500 mb-2 text-center">Tipo de mazo (solo en lobby)</p>
-					<div className="grid grid-cols-2 gap-1">
-						<button
-							onClick={() => send({ type: "setDeckMode", simpleOnly: true })}
-							disabled={state.phase !== "lobby"}
-							className={`py-2 rounded-lg text-xs font-semibold transition-all disabled:cursor-not-allowed ${
-								state.simpleOnly
-									? "bg-red-500 text-white"
-									: "bg-neutral-800 text-neutral-400 hover:bg-neutral-700 disabled:opacity-40"
-							}`}
-							title="A=1, 2-10 · sin figuras"
-						>
-							Simple · 1-10
-						</button>
-						<button
-							onClick={() => send({ type: "setDeckMode", simpleOnly: false })}
-							disabled={state.phase !== "lobby"}
-							className={`py-2 rounded-lg text-xs font-semibold transition-all disabled:cursor-not-allowed ${
-								!state.simpleOnly
-									? "bg-red-500 text-white"
-									: "bg-neutral-800 text-neutral-400 hover:bg-neutral-700 disabled:opacity-40"
-							}`}
-							title="A=1 … 10, J=11, Q=12, K=13"
-						>
-							Completo · 1-13
-						</button>
-					</div>
+				<div className={`w-full ${state.phase !== "lobby" ? "opacity-40" : ""}`}>
+					<p className="text-[10px] text-faint mb-2 text-center">Tipo de mazo (solo en lobby)</p>
+					<SlideToggle
+						className="h-10"
+						value={state.simpleOnly ? "simple" : "full"}
+						onChange={(v) => send({ type: "setDeckMode", simpleOnly: v === "simple" })}
+						disabled={state.phase !== "lobby"}
+						options={[
+							{ value: "simple", label: "Simple · 1-10", title: "A=1, 2-10 · sin figuras" },
+							{ value: "full", label: "Completo · 1-13", title: "A=1 … 10, J=11, Q=12, K=13" },
+						]}
+					/>
 				</div>
 			)}
 
 			{isHost && state.phase !== "lobby" && (
-				<button onClick={() => send({ type: "resetRound" })} className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors">
+				<button onClick={() => send({ type: "resetRound" })} className="text-xs text-faint hover:text-fg transition-colors">
 					Reiniciar ronda
 				</button>
 			)}

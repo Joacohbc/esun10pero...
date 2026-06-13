@@ -38,6 +38,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
 		<html lang="es">
 			<head>
+				{/* Anti-FOUC: aplica el tema guardado antes del primer paint. */}
+				<script
+					dangerouslySetInnerHTML={{
+						__html: `(function(){try{var t=localStorage.getItem('migajero-theme');if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}if(t==='dark'){document.documentElement.classList.add('dark');}}catch(e){}})();`,
+					}}
+				/>
 				<HeadContent />
 			</head>
 			<body className="antialiased">

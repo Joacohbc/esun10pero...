@@ -18,10 +18,10 @@ export function VotePanel({ state, send }: VotePanelProps) {
 	}
 
 	return (
-		<div className="w-full max-w-md mx-auto bg-neutral-900 border border-neutral-800 rounded-2xl p-4">
+		<div className="w-full max-w-md mx-auto bg-surface border border-border rounded-2xl p-4">
 			<div className="flex items-center justify-between mb-3">
-				<p className="text-sm font-bold text-neutral-100">¿Quién no ve la próxima carta?</p>
-				<span className="text-xs text-neutral-400 font-mono">
+				<p className="text-sm font-bold text-fg">¿Quién no ve la próxima carta?</p>
+				<span className="text-xs text-muted font-mono">
 					{castCount}/{connectedCount}
 				</span>
 			</div>
@@ -36,19 +36,19 @@ export function VotePanel({ state, send }: VotePanelProps) {
 							disabled={!p.connected}
 							className={`flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl border text-sm font-medium transition-all disabled:opacity-30 ${
 								selected
-									? "border-red-500 bg-red-500/15 text-white"
-									: "border-neutral-800 bg-neutral-950 text-neutral-300 hover:border-neutral-700"
+									? "border-fg bg-surface-2 text-fg"
+									: "border-border bg-bg text-muted hover:border-border-strong"
 							}`}
 						>
 							<span className="truncate">{p.name}</span>
 							{votes > 0 && (
-								<span className="shrink-0 text-xs font-bold bg-neutral-800 text-neutral-200 rounded-full w-5 h-5 flex items-center justify-center">{votes}</span>
+								<span className="shrink-0 text-xs font-semibold bg-fg text-bg rounded-full w-5 h-5 flex items-center justify-center">{votes}</span>
 							)}
 						</button>
 					);
 				})}
 			</div>
-			<p className="text-xs text-neutral-500 mt-3 text-center">La ronda empieza cuando todos votan. Se puede repetir al mismo jugador.</p>
+			<p className="text-xs text-faint mt-3 text-center">La ronda empieza cuando todos votan. Se puede repetir al mismo jugador.</p>
 		</div>
 	);
 }

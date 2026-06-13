@@ -25,7 +25,7 @@ export function Card3D({ card, flipped, onClick, bounce, className, innerClassNa
 			onClick={onClick}
 		>
 			<div
-				className={`w-full h-full preserve-3d transition-transform duration-500 relative shadow-2xl ${innerClassName ?? "rounded-2xl"} ${
+				className={`w-full h-full preserve-3d transition-transform duration-500 relative shadow-[0_18px_50px_-24px_rgba(0,0,0,0.5)] ${innerClassName ?? "rounded-2xl"} ${
 					flipped ? "rotate-y-180" : ""
 				} ${bounce ? "animate-bounce" : ""}`}
 			>

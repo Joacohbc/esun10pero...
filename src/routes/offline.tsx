@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { Card3D } from "@/components/Card3D";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { MASTER_DECK, SUITS, suitNameEs, VALUES, type Card } from "@/lib/cards";
 
 export const Route = createFileRoute("/offline")({
@@ -39,13 +40,22 @@ function OfflinePage() {
 		<div className="min-h-screen flex flex-col justify-between items-center px-6 py-8 gap-8">
 			{/* Header */}
 			<header className="w-full max-w-md flex justify-between items-center">
-				<h1 className="text-xl font-bold text-neutral-100">Modo Offline</h1>
-				<Link
-					to="/"
-					className="text-xs bg-neutral-900 border border-neutral-800 hover:border-neutral-700 px-3 py-1.5 rounded-full text-neutral-400 transition-colors"
-				>
-					Volver al inicio
-				</Link>
+				<h1 className="text-xl font-semibold tracking-tight text-fg">Modo Offline</h1>
+				{/* Grupo conectado: tema · volver */}
+				<div className="flex items-center gap-0.5 bg-transparent border border-border rounded-full p-1">
+					<ThemeToggle bare className="rounded-full hover:bg-surface" />
+					<span className="w-px h-4 bg-border mx-0.5" />
+					<Link
+						to="/"
+						title="Volver al inicio"
+						className="flex items-center gap-1.5 h-8 pl-2 pr-3 rounded-full text-xs text-muted hover:text-fg hover:bg-surface transition-colors"
+					>
+						<svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+							<path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+						</svg>
+						<span>Inicio</span>
+					</Link>
+				</div>
 			</header>
 
 			{/* Main / Card area */}
@@ -55,9 +65,9 @@ function OfflinePage() {
 				) : (
 					<div
 						onClick={drawCard}
-						className="w-64 h-96 sm:w-72 sm:h-[400px] border-2 border-dashed border-neutral-800 hover:border-neutral-700 rounded-2xl flex flex-col items-center justify-center gap-4 cursor-pointer text-neutral-500 hover:text-neutral-400 transition-colors group"
+						className="w-64 h-96 sm:w-72 sm:h-[400px] border-2 border-dashed border-border hover:border-border-strong rounded-2xl flex flex-col items-center justify-center gap-4 cursor-pointer text-faint hover:text-muted transition-colors group"
 					>
-						<svg className="w-14 h-14 text-neutral-600 group-hover:text-neutral-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.2}>
+						<svg className="w-14 h-14 text-faint group-hover:text-muted transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.2}>
 							<rect x="4" y="3" width="16" height="18" rx="2" />
 							<path strokeLinecap="round" strokeLinejoin="round" d="M12 8v8M9 11h6" />
 						</svg>
@@ -67,10 +77,10 @@ function OfflinePage() {
 
 				{card && (
 					<div className="text-center">
-						<p className="text-xs text-neutral-500 uppercase tracking-widest font-semibold">
+						<p className="text-xs text-faint uppercase tracking-widest font-semibold">
 							{flipped ? "Carta Revelada" : "Carta Oculta"}
 						</p>
-						<p className="text-sm text-neutral-300 mt-1">
+						<p className="text-sm text-muted mt-1">
 							{flipped ? `${card.value} de ${card.suit.symbol}` : "Toca la carta para voltearla"}
 						</p>
 					</div>
@@ -83,7 +93,7 @@ function OfflinePage() {
 					<div className="grid grid-cols-2 gap-2">
 						<button
 							onClick={toggleFlip}
-							className="bg-neutral-950 border border-neutral-800 hover:bg-neutral-900 hover:border-neutral-700 active:scale-[0.98] text-neutral-200 py-3.5 px-4 rounded-xl font-bold tracking-wide transition-all cursor-pointer"
+							className="bg-transparent border border-border hover:bg-surface hover:border-border-strong active:scale-[0.99] text-muted hover:text-fg py-3.5 px-4 rounded-xl text-sm font-medium transition-colors cursor-pointer"
 						>
 							{flipped ? "Ocultar" : "Revelar"}
 						</button>
@@ -92,7 +102,7 @@ function OfflinePage() {
 								setIsFullscreen(true);
 								setShowCloseButton(false);
 							}}
-							className="bg-neutral-950 border border-neutral-800 hover:bg-neutral-900 hover:border-neutral-700 active:scale-[0.98] text-neutral-200 py-3.5 px-4 rounded-xl font-bold tracking-wide transition-all cursor-pointer flex items-center justify-center gap-2"
+							className="bg-transparent border border-border hover:bg-surface hover:border-border-strong active:scale-[0.99] text-muted hover:text-fg py-3.5 px-4 rounded-xl text-sm font-medium transition-colors cursor-pointer flex items-center justify-center gap-2"
 						>
 							<svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
 								<path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4h4m12 4V4h-4M4 16v4h4m12-4v4h-4" />
@@ -105,7 +115,7 @@ function OfflinePage() {
 				<div className="grid grid-cols-2 gap-2">
 					<button
 						onClick={() => setIsSelectorOpen(true)}
-						className="bg-neutral-900 border border-neutral-800 hover:bg-neutral-800 hover:border-neutral-700 active:scale-[0.98] text-neutral-300 py-3.5 px-4 rounded-xl font-semibold tracking-wide transition-all cursor-pointer flex items-center justify-center gap-2"
+						className="bg-transparent border border-border hover:bg-surface hover:border-border-strong active:scale-[0.99] text-muted hover:text-fg py-3.5 px-4 rounded-xl text-sm font-medium transition-colors cursor-pointer flex items-center justify-center gap-2"
 					>
 						<svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
 							<rect x="3" y="3" width="12" height="12" rx="2" />
@@ -116,7 +126,7 @@ function OfflinePage() {
 					</button>
 					<button
 						onClick={drawCard}
-						className="bg-neutral-100 hover:bg-white active:scale-[0.98] text-neutral-900 py-3.5 px-4 rounded-xl font-bold tracking-wide shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
+						className="bg-primary hover:opacity-90 active:scale-[0.99] text-primary-fg py-3.5 px-4 rounded-xl text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-2"
 					>
 						<svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
 							<path strokeLinecap="round" strokeLinejoin="round" d="M18 4l3 3m0 0l-3 3m3-3H9a4 4 0 00-4 4v1a4 4 0 004 4h10M6 20l-3-3m0 0l3-3m-3 3h12a4 4 0 004-4v-1a4 4 0 00-4-4H9" />
@@ -134,7 +144,7 @@ function OfflinePage() {
 						toggleFlip();
 						setShowCloseButton(true);
 					}}
-					className="fixed inset-0 bg-neutral-950 z-50 flex flex-col items-center justify-center p-0 transition-all"
+					className="fixed inset-0 bg-bg z-50 flex flex-col items-center justify-center p-0 transition-all"
 				>
 					{/* Close button */}
 					{showCloseButton && (
@@ -143,7 +153,7 @@ function OfflinePage() {
 								e.stopPropagation();
 								setIsFullscreen(false);
 							}}
-							className="absolute top-6 right-6 text-neutral-400 hover:text-white text-2xl bg-neutral-900/80 backdrop-blur-sm border border-neutral-800 hover:border-neutral-700 w-12 h-12 rounded-full flex items-center justify-center transition-colors cursor-pointer z-50"
+							className="absolute top-6 right-6 text-muted hover:text-fg text-2xl bg-surface/80 backdrop-blur-sm border border-border hover:border-border-strong w-12 h-12 rounded-full flex items-center justify-center transition-colors cursor-pointer z-50"
 						>
 							✕
 						</button>
@@ -169,26 +179,26 @@ function OfflinePage() {
 				>
 					<div
 						onClick={(e) => e.stopPropagation()}
-						className="bg-neutral-900 border border-neutral-800 rounded-2xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden"
+						className="bg-surface border border-border rounded-2xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-xl overflow-hidden"
 					>
 						{/* Header */}
-						<div className="p-5 border-b border-neutral-800 flex justify-between items-center bg-neutral-900/50">
+						<div className="p-5 border-b border-border flex justify-between items-center bg-surface">
 							<div>
-								<h3 className="text-base font-bold text-neutral-100">Elige una carta</h3>
-								<p className="text-xs text-neutral-400 mt-1">Selecciona cualquier carta de la baraja para ponerla en la mesa.</p>
+								<h3 className="text-base font-bold text-fg">Elige una carta</h3>
+								<p className="text-xs text-muted mt-1">Selecciona cualquier carta de la baraja para ponerla en la mesa.</p>
 							</div>
-							<button onClick={() => setIsSelectorOpen(false)} className="text-neutral-400 hover:text-white p-2 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 transition-colors cursor-pointer">
+							<button onClick={() => setIsSelectorOpen(false)} className="text-muted hover:text-fg p-2 rounded-lg bg-surface-2 hover:bg-border transition-colors cursor-pointer">
 								✕
 							</button>
 						</div>
 
 						{/* Body */}
-						<div className="p-6 overflow-y-auto space-y-6 flex-1 scrollbar-none bg-neutral-900/40">
+						<div className="p-6 overflow-y-auto space-y-6 flex-1 scrollbar-none bg-surface">
 							{SUITS.map((suit) => (
 								<div key={suit.name} className="space-y-3">
-									<div className="flex items-center gap-2 border-b border-neutral-800/80 pb-1.5">
-										<span className={`text-xl ${suit.isRed ? "text-red-500" : "text-neutral-400"}`}>{suit.symbol}</span>
-										<span className="text-xs font-bold uppercase tracking-wider text-neutral-400">{suitNameEs(suit)}</span>
+									<div className="flex items-center gap-2 border-b border-border pb-1.5">
+										<span className={`text-xl ${suit.isRed ? "text-red-500" : "text-muted"}`}>{suit.symbol}</span>
+										<span className="text-xs font-bold uppercase tracking-wider text-muted">{suitNameEs(suit)}</span>
 									</div>
 									<div className="grid grid-cols-4 sm:grid-cols-7 md:grid-cols-13 gap-2 pt-1">
 										{VALUES.map((val) => {
@@ -207,7 +217,7 @@ function OfflinePage() {
 													}}
 													className={`h-16 rounded-lg border ${
 														isSelected
-															? "border-emerald-500 bg-emerald-950/20 text-emerald-400 scale-[1.05]"
+															? "border-neutral-900 ring-1 ring-neutral-900 text-neutral-900 bg-neutral-100 scale-[1.05]"
 															: suit.isRed
 																? "text-red-500 border-red-500/20 bg-white"
 																: "text-neutral-900 border-neutral-200 bg-white"
@@ -224,8 +234,8 @@ function OfflinePage() {
 						</div>
 
 						{/* Footer */}
-						<div className="p-4 border-t border-neutral-800 bg-neutral-950 flex justify-end">
-							<button onClick={() => setIsSelectorOpen(false)} className="text-xs bg-neutral-800 hover:bg-neutral-700 text-neutral-300 px-5 py-2.5 rounded-lg font-bold transition-all cursor-pointer">
+						<div className="p-4 border-t border-border bg-bg flex justify-end">
+							<button onClick={() => setIsSelectorOpen(false)} className="text-xs bg-surface-2 hover:bg-border text-fg px-5 py-2.5 rounded-lg font-bold transition-all cursor-pointer">
 								Cerrar
 							</button>
 						</div>
