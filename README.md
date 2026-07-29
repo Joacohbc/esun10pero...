@@ -2,7 +2,7 @@
 
 <p align="center">
   <strong>¿Es realmente el amor ciego? Pon a prueba los estándares de tus amigos.</strong><br>
-  Imagina encontrar a la persona perfecta, un 10 absoluto... pero resulta que aplaude cuando aterriza el avión. ¿Qué nota le pones ahora? Basado en el fenómeno viral, esta aplicación web te permite crear salas multijugador en tiempo real para debatir, votar y arruinar puntuaciones perfectas con tus amigos. Una experiencia de juego con un diseño minimalista, rápido y enfocado 100% en la polémica y la diversión.
+  Imagina encontrar a la persona perfecta, un 10 absoluto... pero resulta que le gusta la pizza con piña. ¿Qué nota le pones ahora? Basado en el fenómeno viral, esta web te permite crear salas multijugador en tiempo real para debatir, votar y arruinar puntuaciones perfectas con tus amigos. Una experiencia de juego con un diseño minimalista, rápido y enfocado 100% en la polémica y la diversión.
 </p>
 
 ## Built With
