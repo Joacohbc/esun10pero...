@@ -4,7 +4,7 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "palomas",
+	"name": "esun10pero",
 	"main": "worker.ts",
 	"compatibility_date": "2026-06-07",
 	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
